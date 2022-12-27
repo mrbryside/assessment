@@ -1,0 +1,5 @@
+port: 2565
+database:
+  driver: "postgres"
+  url: "postgres://hgopfnjn:iaPYJl23WqduL57tfmotm0MmtyCAMfsm@tiny.db.elephantsql.com/hgopfnjn?sslmode=disable"
+  timeout: 10
