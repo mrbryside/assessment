@@ -7,16 +7,16 @@ import (
 
 type spyStore interface {
 	db.Store
-	CreateWasCalled() bool // additional function
+	IsWasCalled() bool // additional function
 }
 
 // ----------------------------- create fail spy ---------------------------------//
 type spyStoreWithCreateFail struct {
-	createWasCalled bool
+	wasCalled bool
 }
 
 func newSpyStoreWithCreateFail() *spyStoreWithCreateFail {
-	return &spyStoreWithCreateFail{createWasCalled: false}
+	return &spyStoreWithCreateFail{wasCalled: false}
 }
 
 func (s *spyStoreWithCreateFail) InitStore() error {
@@ -24,22 +24,26 @@ func (s *spyStoreWithCreateFail) InitStore() error {
 }
 
 func (s *spyStoreWithCreateFail) Insert(modelId interface{}, args ...any) error {
-	s.createWasCalled = true
+	s.wasCalled = true
 	// destructuring args
 	return errors.New("can't insert")
 }
 
-func (s *spyStoreWithCreateFail) CreateWasCalled() bool {
-	return s.createWasCalled
+func (s *spyStoreWithCreateFail) FindOne(rowId int, model interface{}, queryLang string) error {
+	return nil
+}
+
+func (s *spyStoreWithCreateFail) IsWasCalled() bool {
+	return s.wasCalled
 }
 
 // ----------------------------- create success spy ---------------------------------//
 type spyStoreWithCreateSuccess struct {
-	createWasCalled bool
+	wasCalled bool
 }
 
 func newSpyStoreWithCreateSuccess() *spyStoreWithCreateSuccess {
-	return &spyStoreWithCreateSuccess{createWasCalled: false}
+	return &spyStoreWithCreateSuccess{wasCalled: false}
 }
 
 func (s *spyStoreWithCreateSuccess) InitStore() error {
@@ -47,12 +51,16 @@ func (s *spyStoreWithCreateSuccess) InitStore() error {
 }
 
 func (s *spyStoreWithCreateSuccess) Insert(modelId interface{}, args ...any) error {
-	s.createWasCalled = true
+	s.wasCalled = true
 	p, _ := modelId.(*int)
 	*p = 5
 	return nil
 }
 
-func (s *spyStoreWithCreateSuccess) CreateWasCalled() bool {
-	return s.createWasCalled
+func (s *spyStoreWithCreateSuccess) FindOne(rowId int, model interface{}, queryLang string) error {
+	return nil
+}
+
+func (s *spyStoreWithCreateSuccess) IsWasCalled() bool {
+	return s.wasCalled
 }

@@ -31,3 +31,18 @@ func (p *postgres) Insert(modelId interface{}, args ...any) error {
 	}
 	return nil
 }
+func (p *postgres) FindOne(rowId int, model interface{}, queryLang string) error {
+	// destructuring args
+	//"SELECT id, name, age FROM users where id=$1"
+	stmt, err := p.db.Prepare(queryLang)
+	if err != nil {
+
+	}
+
+	row := stmt.QueryRow(rowId)
+	err = row.Scan(model)
+	if err != nil {
+		return err
+	}
+	return nil
+}

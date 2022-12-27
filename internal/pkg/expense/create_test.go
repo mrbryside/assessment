@@ -7,15 +7,14 @@ import (
 	"github.com/labstack/echo/v4"
 	"github.com/mrbryside/assessment/internal/pkg/expense/mock"
 	"github.com/mrbryside/assessment/internal/pkg/util"
-	. "github.com/onsi/ginkgo"
-	. "github.com/onsi/gomega"
+	"github.com/stretchr/testify/assert"
 	"net/http"
 	"net/http/httptest"
 	"strings"
 	"testing"
 )
 
-var tests = []struct {
+var createTests = []struct {
 	name string
 	mock mock.CreateExpenseMock
 }{
@@ -26,42 +25,37 @@ var tests = []struct {
 }
 
 func TestCreateExpense(t *testing.T) {
-	RegisterFailHandler(Fail)
-	RunSpecs(t, "Testing Suite")
-}
-
-var _ = Describe("create expenses", func() {
-	for _, tc := range tests {
+	for _, tc := range createTests {
 		tc := tc
-		Context("Create expense when body is "+tc.mock.Payload, func() {
-			It(tc.name, func() {
-				// Arrange
-				mock := tc.mock
-				expenses := NewExpense(mock.SpyStore)
-				e := echo.New()
-				e.Validator = util.Validator(validator.New())
-				req := httptest.NewRequest(http.MethodPost, "/", strings.NewReader(mock.Payload))
-				req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
-				rec := httptest.NewRecorder()
-				c := e.NewContext(req, rec)
-				err := expenses.CreateExpenseHandler(c)
+		t.Run(tc.name, func(t *testing.T) {
+			// Arrange
+			m := tc.mock
+			expenses := NewExpense(m.SpyStore)
+			e := echo.New()
+			e.Validator = util.Validator(validator.New())
+			req := httptest.NewRequest(http.MethodPost, "/", strings.NewReader(m.Payload))
+			req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
+			rec := httptest.NewRecorder()
+			c := e.NewContext(req, rec)
+			err := expenses.CreateExpenseHandler(c)
 
-				wantResp := mock.Response
-				wantCalled := mock.Called
-				wantCode := mock.Code
+			wantResp := m.Response
+			wantCalled := m.Called
+			wantCode := m.Code
 
-				// Act
-				gotErr := err
-				gotResp := rec.Body.String()
-				gotCalled := mock.SpyStore.CreateWasCalled()
-				gotCode := c.Response().Status
+			// Act
+			gotErr := err
+			gotResp := rec.Body.String()
+			gotCalled := m.SpyStore.IsWasCalled()
+			gotCode := c.Response().Status
 
-				// Assert
-				Expect(gotErr).ShouldNot(HaveOccurred())
-				Expect(gotCalled).To(BeEquivalentTo(wantCalled))
-				Expect(gotResp).To(MatchJSON(wantResp))
-				Expect(gotCode).To(BeEquivalentTo(wantCode))
-			})
+			// Assert
+			assert.Nil(t, gotErr)
+			assert.Equal(t, wantCode, gotCode)
+			assert.JSONEq(t, wantResp, gotResp)
+			assert.Equal(t, wantCode, gotCode)
+			assert.Equal(t, wantCalled, gotCalled)
+
 		})
 	}
-})
+}

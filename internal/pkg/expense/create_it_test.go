@@ -42,7 +42,7 @@ var _ = Describe("create expenses", func() {
 			wantTags := []string{"food", "beverage"}
 
 			// Act
-			var e expenseModel
+			var e ModelDto
 			body := bytes.NewBufferString(payload)
 			testHelper := util.TestHelper()
 			res := testHelper.Request(http.MethodPost, testHelper.Uri("expenses"), body)

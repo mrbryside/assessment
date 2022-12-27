@@ -2,31 +2,6 @@ package mock
 
 import "net/http"
 
-const (
-	called    = true
-	notCalled = false
-)
-
-type CreateExpenseMock struct {
-	SpyStore spyStore
-	Payload  string
-	Response string
-	Code     int
-	Called   bool
-}
-
-func newCreateExpenseMock(s spyStore, p string, r string, c int, ca bool) CreateExpenseMock {
-	return CreateExpenseMock{
-		SpyStore: s,
-		Payload:  p,
-		Response: r,
-		Code:     c,
-		Called:   ca,
-	}
-}
-
-type expenseCreator struct{}
-
 func (e expenseCreator) CreateSuccess() CreateExpenseMock {
 	var (
 		expenseJSON = `{
