@@ -20,6 +20,7 @@ var getTests = []struct {
 	{name: "should return response expense data", mock: GetterMock().GetExpenseSuccess()},
 	{name: "should return required path params", mock: GetterMock().GetExpenseValidateFailed()},
 	{name: "should return invalid path params", mock: GetterMock().GetExpenseBindFailed()},
+	{name: "should return internal server error", mock: GetterMock().GetExpenseInternalFailed()},
 }
 
 func TestGetExpense(t *testing.T) {

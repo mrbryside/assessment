@@ -45,3 +45,16 @@ func (e expenseGetter) GetExpenseBindFailed() expenseMock {
 	s := newSpyStoreWithGetExpenseSuccess()
 	return newExpenseMock(s, queryId, expenseRespJSON, http.StatusBadRequest, notCalled)
 }
+
+func (e expenseGetter) GetExpenseInternalFailed() expenseMock {
+	var (
+		queryId         = "5"
+		expenseRespJSON = `{
+			"code": "5000",
+			"message": "internal server error"
+		}`
+	)
+
+	s := newSpyStoreWithGetExpenseFail()
+	return newExpenseMock(s, queryId, expenseRespJSON, http.StatusInternalServerError, called)
+}
