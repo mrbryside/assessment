@@ -15,7 +15,7 @@ import (
 
 var createTests = []struct {
 	name string
-	mock expenseMock
+	mock mock
 }{
 	{name: "should return response expense data", mock: creationMock().CreateSuccess()},
 	{name: "should return response bad request invalid", mock: creationMock().CreateBindFail()},

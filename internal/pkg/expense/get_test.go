@@ -15,7 +15,7 @@ import (
 
 var getTests = []struct {
 	name string
-	mock expenseMock
+	mock mock
 }{
 	{name: "should return response expense data", mock: getterMock().GetExpenseSuccess()},
 	{name: "should return required path params", mock: getterMock().GetExpenseValidateFailed()},

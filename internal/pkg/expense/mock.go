@@ -5,7 +5,7 @@ const (
 	notCalled = false
 )
 
-type expenseMock struct {
+type mock struct {
 	SpyStore spyStore
 	Payload  string
 	Response string
@@ -13,8 +13,8 @@ type expenseMock struct {
 	Called   bool
 }
 
-func newExpenseMock(s spyStore, p string, r string, c int, ca bool) expenseMock {
-	return expenseMock{
+func newExpenseMock(s spyStore, p string, r string, c int, ca bool) mock {
+	return mock{
 		SpyStore: s,
 		Payload:  p,
 		Response: r,

@@ -10,7 +10,7 @@ func getterMock() expenseGetter {
 	return expenseGetter{}
 }
 
-func (e expenseGetter) GetExpenseSuccess() expenseMock {
+func (e expenseGetter) GetExpenseSuccess() mock {
 	var (
 		queryId         = "5"
 		expenseRespJSON = `{
@@ -26,7 +26,7 @@ func (e expenseGetter) GetExpenseSuccess() expenseMock {
 	return newExpenseMock(s, queryId, expenseRespJSON, http.StatusOK, called)
 }
 
-func (e expenseGetter) GetExpenseValidateFailed() expenseMock {
+func (e expenseGetter) GetExpenseValidateFailed() mock {
 	var (
 		queryId         = ""
 		expenseRespJSON = `{
@@ -39,7 +39,7 @@ func (e expenseGetter) GetExpenseValidateFailed() expenseMock {
 	return newExpenseMock(s, queryId, expenseRespJSON, http.StatusBadRequest, notCalled)
 }
 
-func (e expenseGetter) GetExpenseBindFailed() expenseMock {
+func (e expenseGetter) GetExpenseBindFailed() mock {
 	var (
 		queryId         = "error"
 		expenseRespJSON = `{
@@ -52,7 +52,7 @@ func (e expenseGetter) GetExpenseBindFailed() expenseMock {
 	return newExpenseMock(s, queryId, expenseRespJSON, http.StatusBadRequest, notCalled)
 }
 
-func (e expenseGetter) GetExpenseInternalFailed() expenseMock {
+func (e expenseGetter) GetExpenseInternalFailed() mock {
 	var (
 		queryId         = "5"
 		expenseRespJSON = `{
@@ -65,7 +65,7 @@ func (e expenseGetter) GetExpenseInternalFailed() expenseMock {
 	return newExpenseMock(s, queryId, expenseRespJSON, http.StatusInternalServerError, called)
 }
 
-func (e expenseGetter) GetExpenseNotFound() expenseMock {
+func (e expenseGetter) GetExpenseNotFound() mock {
 	var (
 		queryId         = "5"
 		expenseRespJSON = `{

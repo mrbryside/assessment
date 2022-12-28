@@ -8,7 +8,7 @@ func creationMock() expenseCreator {
 
 type expenseCreator struct{}
 
-func (e expenseCreator) CreateSuccess() expenseMock {
+func (e expenseCreator) CreateSuccess() mock {
 	var (
 		expenseJSON = `{
 			"title": "strawberry smoothie",
@@ -29,7 +29,7 @@ func (e expenseCreator) CreateSuccess() expenseMock {
 	return newExpenseMock(s, expenseJSON, expenseRespJSON, http.StatusCreated, called)
 }
 
-func (e expenseCreator) CreateBindFail() expenseMock {
+func (e expenseCreator) CreateBindFail() mock {
 	var (
 		expenseJSON = `{
 			"title": "strawberry smoothie",
@@ -48,7 +48,7 @@ func (e expenseCreator) CreateBindFail() expenseMock {
 
 }
 
-func (e expenseCreator) CreateValidateFail() expenseMock {
+func (e expenseCreator) CreateValidateFail() mock {
 	var (
 		expenseJSON = `{
 			"title": "strawberry smoothie",
@@ -65,7 +65,7 @@ func (e expenseCreator) CreateValidateFail() expenseMock {
 	return newExpenseMock(s, expenseJSON, expenseRespJSON, http.StatusBadRequest, notCalled)
 }
 
-func (e expenseCreator) CreateInternalFail() expenseMock {
+func (e expenseCreator) CreateInternalFail() mock {
 	var (
 		expenseJSON = `{
 			"title": "strawberry smoothie",
