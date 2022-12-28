@@ -6,7 +6,7 @@ integration-test-down:
 	DOCKER_BUILDKIT=0 docker-compose -f Docker-compose-test.yaml down
 
 unit-test:
-	go clean -testcache && go test -v -tags=unit ./...
+	go clean -testcache && go test -v -tags=unit ./... -cover
 
 docker-build:
 	docker build -t assessment/expenses:latest .

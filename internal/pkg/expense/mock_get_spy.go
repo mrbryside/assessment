@@ -1,8 +1,9 @@
-package mock
+package expense
 
 import (
 	"encoding/json"
 	"errors"
+	"github.com/lib/pq"
 )
 
 // ----------------------------- get success spy ---------------------------------//
@@ -18,13 +19,28 @@ func (s *spyStoreWithGetExpenseSuccess) InitStore() error {
 	return nil
 }
 
-func (s *spyStoreWithGetExpenseSuccess) FindOne(rowId int, model interface{}, queryLang string) error {
+func (s *spyStoreWithGetExpenseSuccess) FindOne(rowId int, queryLang string, args ...any) error {
 	s.wasCalled = true
-
-	err := json.Unmarshal([]byte(GetterMock().GetExpenseSuccess().Response), model)
+	var model ModelDto
+	err := json.Unmarshal([]byte(GetterMock().GetExpenseSuccess().Response), &model)
 	if err != nil {
-		// handle error
+		return err
 	}
+	id, _ := args[0].(*int)
+	*id = model.ID
+
+	title, _ := args[1].(*string)
+	*title = model.Title
+
+	amount, _ := args[2].(*int)
+	*amount = model.Amount
+
+	note, _ := args[3].(*string)
+	*note = model.Note
+
+	tags, _ := args[4].(*pq.StringArray)
+	*tags = model.Tags
+
 	return nil
 }
 
@@ -36,7 +52,7 @@ func (s *spyStoreWithGetExpenseSuccess) IsWasCalled() bool {
 	return s.wasCalled
 }
 
-// ----------------------------- get success spy ---------------------------------//
+// ----------------------------- get failed spy ---------------------------------//
 type spyStoreWithGetExpenseFail struct {
 	wasCalled bool
 }
@@ -49,7 +65,7 @@ func (s *spyStoreWithGetExpenseFail) InitStore() error {
 	return nil
 }
 
-func (s *spyStoreWithGetExpenseFail) FindOne(rowId int, model interface{}, queryLang string) error {
+func (s *spyStoreWithGetExpenseFail) FindOne(rowId int, queryLang string, args ...any) error {
 	s.wasCalled = true
 	return errors.New("error")
 }

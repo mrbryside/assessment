@@ -2,7 +2,7 @@ package expense
 
 import "github.com/mrbryside/assessment/internal/pkg/db"
 
-type modelDto struct {
+type ModelDto struct {
 	ID     int      `json:"id"`
 	Title  string   `json:"title" validate:"required"`
 	Amount int      `json:"amount" validate:"required"`
@@ -10,8 +10,8 @@ type modelDto struct {
 	Tags   []string `json:"tags" param:"tags" validate:"required,dive,required"`
 }
 
-func newModelDto() *modelDto {
-	return &modelDto{}
+func newModelDto() *ModelDto {
+	return &ModelDto{}
 }
 
 type paramDto struct {

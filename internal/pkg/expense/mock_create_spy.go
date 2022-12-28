@@ -1,4 +1,4 @@
-package mock
+package expense
 
 import (
 	"errors"
@@ -29,7 +29,7 @@ func (s *spyStoreWithCreateFail) Insert(modelId interface{}, args ...any) error 
 	return errors.New("can't insert")
 }
 
-func (s *spyStoreWithCreateFail) FindOne(rowId int, model interface{}, queryLang string) error {
+func (s *spyStoreWithCreateFail) FindOne(rowId int, queryLang string, args ...any) error {
 	return nil
 }
 
@@ -57,7 +57,7 @@ func (s *spyStoreWithCreateSuccess) Insert(modelId interface{}, args ...any) err
 	return nil
 }
 
-func (s *spyStoreWithCreateSuccess) FindOne(rowId int, model interface{}, queryLang string) error {
+func (s *spyStoreWithCreateSuccess) FindOne(rowId int, queryLang string, args ...any) error {
 	return nil
 }
 

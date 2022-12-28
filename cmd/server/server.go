@@ -6,7 +6,6 @@ import (
 	"github.com/labstack/echo/v4/middleware"
 	"github.com/mrbryside/assessment/internal/config"
 	"github.com/mrbryside/assessment/internal/pkg/db"
-	"github.com/mrbryside/assessment/internal/pkg/db/postgres"
 	"github.com/mrbryside/assessment/internal/pkg/expense"
 	"github.com/mrbryside/assessment/internal/pkg/util"
 	"log"
@@ -20,7 +19,7 @@ func main() {
 	port := config.NewProvider().Port
 
 	// init db to Store
-	db.InitDB(postgres.NewPostgres(config.NewProvider().DbUrl))
+	db.InitDB(db.NewPostgres(config.NewProvider().DbUrl))
 
 	// init echo framework
 	e := echo.New()
@@ -33,6 +32,7 @@ func main() {
 
 	// register routes
 	e.POST("/expenses", expenses.CreateExpenseHandler)
+	e.GET("/expenses/:id", expenses.GetExpenseHandler)
 
 	log.Printf("Server started at %v\n", port)
 	log.Fatal(e.Start(port))

@@ -5,7 +5,6 @@ package expense
 import (
 	"github.com/go-playground/validator"
 	"github.com/labstack/echo/v4"
-	"github.com/mrbryside/assessment/internal/pkg/expense/mock"
 	"github.com/mrbryside/assessment/internal/pkg/util"
 	"github.com/stretchr/testify/assert"
 	"net/http"
@@ -16,12 +15,12 @@ import (
 
 var createTests = []struct {
 	name string
-	mock mock.CreateExpenseMock
+	mock expenseMock
 }{
-	{name: "should return response expense data", mock: mock.CreationMock().CreateSuccess()},
-	{name: "should return response bad request invalid", mock: mock.CreationMock().CreateBindFail()},
-	{name: "should return response bad request required field", mock: mock.CreationMock().CreateValidateFail()},
-	{name: "should return response internal server error", mock: mock.CreationMock().CreateInternalFail()},
+	{name: "should return response expense data", mock: CreationMock().CreateSuccess()},
+	{name: "should return response bad request invalid", mock: CreationMock().CreateBindFail()},
+	{name: "should return response bad request required field", mock: CreationMock().CreateValidateFail()},
+	{name: "should return response internal server error", mock: CreationMock().CreateInternalFail()},
 }
 
 func TestCreateExpense(t *testing.T) {

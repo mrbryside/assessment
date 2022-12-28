@@ -2,11 +2,12 @@ package expense
 
 import (
 	"github.com/labstack/echo/v4"
+	"github.com/lib/pq"
 	"github.com/mrbryside/assessment/internal/pkg/util"
 )
 
 func (e *expense) GetExpenseHandler(c echo.Context) error {
-	modelDto := newModelDto()
+	model := newModelDto()
 	param := newParamDto()
 	err := c.Bind(param)
 	if err != nil {
@@ -18,7 +19,15 @@ func (e *expense) GetExpenseHandler(c echo.Context) error {
 		return util.JsonHandler().BadRequest(c, err.Error())
 	}
 
-	_ = e.store.FindOne(1, modelDto, "SELECT id, name, age FROM users where id=$1")
+	_ = e.store.FindOne(
+		param.ID,
+		"SELECT id, title, amount, note, tags FROM expenses where id=$1",
+		&model.ID,
+		&model.Title,
+		&model.Amount,
+		&model.Note,
+		pq.Array(&model.Tags),
+	)
 
-	return util.JsonHandler().Success(c, modelDto)
+	return util.JsonHandler().Success(c, model)
 }

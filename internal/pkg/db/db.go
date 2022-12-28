@@ -9,7 +9,7 @@ var DB Store
 type Store interface {
 	InitStore() error
 	Insert(interface{}, ...any) error
-	FindOne(int, interface{}, string) error
+	FindOne(int, string, ...any) error
 }
 
 func InitDB(db Store) {

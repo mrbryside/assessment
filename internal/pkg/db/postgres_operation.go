@@ -1,4 +1,4 @@
-package postgres
+package db
 
 import (
 	"database/sql"
@@ -31,16 +31,14 @@ func (p *postgres) Insert(modelId interface{}, args ...any) error {
 	}
 	return nil
 }
-func (p *postgres) FindOne(rowId int, model interface{}, queryLang string) error {
-	// destructuring args
-	//"SELECT id, name, age FROM users where id=$1"
+func (p *postgres) FindOne(rowId int, queryLang string, args ...any) error {
 	stmt, err := p.db.Prepare(queryLang)
 	if err != nil {
-
+		return err
 	}
 
 	row := stmt.QueryRow(rowId)
-	err = row.Scan(model)
+	err = row.Scan(args...)
 	if err != nil {
 		return err
 	}

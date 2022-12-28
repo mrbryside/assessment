@@ -1,4 +1,4 @@
-package postgres
+package db
 
 // InitPostgresScript postgres
 

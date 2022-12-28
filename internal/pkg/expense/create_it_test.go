@@ -6,8 +6,6 @@ import (
 	"bytes"
 	"context"
 	"github.com/mrbryside/assessment/internal/pkg/db"
-	"github.com/mrbryside/assessment/internal/pkg/db/postgres"
-	"github.com/mrbryside/assessment/internal/pkg/expense/mock"
 	"github.com/mrbryside/assessment/internal/pkg/util"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
@@ -17,7 +15,7 @@ import (
 )
 
 var (
-	mockCreation = mock.CreationMock().CreateSuccess()
+	mockCreation = CreationMock().CreateSuccess()
 	serverPort   = ":2565"
 )
 
@@ -30,7 +28,7 @@ var _ = Describe("create expenses", func() {
 	Context("Create expense when body is "+mockCreation.Payload, func() {
 		It("integration test create expense", func() {
 			// Setup server
-			db.InitDB(postgres.NewPostgres("postgresql://root:root@db/test-db?sslmode=disable"))
+			db.InitDB(db.NewPostgres("postgresql://root:root@db/test-db?sslmode=disable"))
 			expenses := NewExpense(db.DB)
 			eh := util.TestHelper().InitItEcho(expenses.CreateExpenseHandler, "/expenses")
 			// Arrange

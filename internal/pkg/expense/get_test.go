@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"github.com/go-playground/validator"
 	"github.com/labstack/echo/v4"
-	"github.com/mrbryside/assessment/internal/pkg/expense/mock"
 	"github.com/mrbryside/assessment/internal/pkg/util"
 	"github.com/stretchr/testify/assert"
 	"net/http"
@@ -16,11 +15,11 @@ import (
 
 var getTests = []struct {
 	name string
-	mock mock.GetExpenseMock
+	mock expenseMock
 }{
-	{name: "should return response expense data", mock: mock.GetterMock().GetExpenseSuccess()},
-	{name: "should return required path params", mock: mock.GetterMock().GetExpenseValidateFailed()},
-	{name: "should return invalid path params", mock: mock.GetterMock().GetExpenseBindFailed()},
+	{name: "should return response expense data", mock: GetterMock().GetExpenseSuccess()},
+	{name: "should return required path params", mock: GetterMock().GetExpenseValidateFailed()},
+	{name: "should return invalid path params", mock: GetterMock().GetExpenseBindFailed()},
 }
 
 func TestGetExpense(t *testing.T) {

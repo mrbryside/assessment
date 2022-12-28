@@ -1,10 +1,10 @@
-package mock
+package expense
 
 import (
 	"net/http"
 )
 
-func (e expenseGetter) GetExpenseSuccess() GetExpenseMock {
+func (e expenseGetter) GetExpenseSuccess() expenseMock {
 	var (
 		queryId         = "5"
 		expenseRespJSON = `{
@@ -17,10 +17,10 @@ func (e expenseGetter) GetExpenseSuccess() GetExpenseMock {
 	)
 
 	s := newSpyStoreWithGetExpenseSuccess()
-	return newGetExpenseMock(s, queryId, expenseRespJSON, http.StatusOK, called)
+	return newExpenseMock(s, queryId, expenseRespJSON, http.StatusOK, called)
 }
 
-func (e expenseGetter) GetExpenseValidateFailed() GetExpenseMock {
+func (e expenseGetter) GetExpenseValidateFailed() expenseMock {
 	var (
 		queryId         = ""
 		expenseRespJSON = `{
@@ -30,10 +30,10 @@ func (e expenseGetter) GetExpenseValidateFailed() GetExpenseMock {
 	)
 
 	s := newSpyStoreWithGetExpenseSuccess()
-	return newGetExpenseMock(s, queryId, expenseRespJSON, http.StatusBadRequest, called)
+	return newExpenseMock(s, queryId, expenseRespJSON, http.StatusBadRequest, called)
 }
 
-func (e expenseGetter) GetExpenseBindFailed() GetExpenseMock {
+func (e expenseGetter) GetExpenseBindFailed() expenseMock {
 	var (
 		queryId         = "error"
 		expenseRespJSON = `{
@@ -43,5 +43,5 @@ func (e expenseGetter) GetExpenseBindFailed() GetExpenseMock {
 	)
 
 	s := newSpyStoreWithGetExpenseSuccess()
-	return newGetExpenseMock(s, queryId, expenseRespJSON, http.StatusBadRequest, called)
+	return newExpenseMock(s, queryId, expenseRespJSON, http.StatusBadRequest, called)
 }

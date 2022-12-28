@@ -1,8 +1,8 @@
-package mock
+package expense
 
 import "net/http"
 
-func (e expenseCreator) CreateSuccess() CreateExpenseMock {
+func (e expenseCreator) CreateSuccess() expenseMock {
 	var (
 		expenseJSON = `{
 			"title": "strawberry smoothie",
@@ -20,10 +20,10 @@ func (e expenseCreator) CreateSuccess() CreateExpenseMock {
 	)
 
 	s := newSpyStoreWithCreateSuccess()
-	return newCreateExpenseMock(s, expenseJSON, expenseRespJSON, http.StatusCreated, called)
+	return newExpenseMock(s, expenseJSON, expenseRespJSON, http.StatusCreated, called)
 }
 
-func (e expenseCreator) CreateBindFail() CreateExpenseMock {
+func (e expenseCreator) CreateBindFail() expenseMock {
 	var (
 		expenseJSON = `{
 			"title": "strawberry smoothie",
@@ -38,11 +38,11 @@ func (e expenseCreator) CreateBindFail() CreateExpenseMock {
 	)
 
 	s := newSpyStoreWithCreateSuccess()
-	return newCreateExpenseMock(s, expenseJSON, expenseRespJSON, http.StatusBadRequest, notCalled)
+	return newExpenseMock(s, expenseJSON, expenseRespJSON, http.StatusBadRequest, notCalled)
 
 }
 
-func (e expenseCreator) CreateValidateFail() CreateExpenseMock {
+func (e expenseCreator) CreateValidateFail() expenseMock {
 	var (
 		expenseJSON = `{
 			"title": "strawberry smoothie",
@@ -56,10 +56,10 @@ func (e expenseCreator) CreateValidateFail() CreateExpenseMock {
 	)
 
 	s := newSpyStoreWithCreateSuccess()
-	return newCreateExpenseMock(s, expenseJSON, expenseRespJSON, http.StatusBadRequest, notCalled)
+	return newExpenseMock(s, expenseJSON, expenseRespJSON, http.StatusBadRequest, notCalled)
 }
 
-func (e expenseCreator) CreateInternalFail() CreateExpenseMock {
+func (e expenseCreator) CreateInternalFail() expenseMock {
 	var (
 		expenseJSON = `{
 			"title": "strawberry smoothie",
@@ -74,5 +74,5 @@ func (e expenseCreator) CreateInternalFail() CreateExpenseMock {
 	)
 
 	s := newSpyStoreWithCreateFail()
-	return newCreateExpenseMock(s, expenseJSON, expenseRespJSON, http.StatusInternalServerError, called)
+	return newExpenseMock(s, expenseJSON, expenseRespJSON, http.StatusInternalServerError, called)
 }
