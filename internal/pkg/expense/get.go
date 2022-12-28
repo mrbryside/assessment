@@ -8,9 +8,12 @@ import (
 func (e *expense) GetExpenseHandler(c echo.Context) error {
 	modelDto := newModelDto()
 	param := newParamDto()
-	_ = c.Bind(param)
+	err := c.Bind(param)
+	if err != nil {
+		return util.JsonHandler().BadRequest(c, "Request parameter is invalid.")
+	}
 
-	err := c.Validate(param)
+	err = c.Validate(param)
 	if err != nil {
 		return util.JsonHandler().BadRequest(c, err.Error())
 	}

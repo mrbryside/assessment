@@ -15,7 +15,7 @@ func newModelDto() *modelDto {
 }
 
 type paramDto struct {
-	ID string `json:"id" param:"id" validate:"required"`
+	ID int `json:"id" param:"id" validate:"required"`
 }
 
 func newParamDto() *paramDto {

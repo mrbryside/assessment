@@ -19,7 +19,8 @@ var getTests = []struct {
 	mock mock.GetExpenseMock
 }{
 	{name: "should return response expense data", mock: mock.GetterMock().GetExpenseSuccess()},
-	{name: "should return required path params", mock: mock.GetterMock().GetExpenseParamsFailed()},
+	{name: "should return required path params", mock: mock.GetterMock().GetExpenseValidateFailed()},
+	{name: "should return invalid path params", mock: mock.GetterMock().GetExpenseBindFailed()},
 }
 
 func TestGetExpense(t *testing.T) {
