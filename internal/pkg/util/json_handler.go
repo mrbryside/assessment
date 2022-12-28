@@ -5,12 +5,15 @@ import (
 	"net/http"
 )
 
-// custom status code
-const badRequestCode = "4000"
-const internalErrorCode = "5000"
+const (
+	// custom status code
+	badRequestCode    = "4000"
+	notFoundCode      = "4004"
+	internalErrorCode = "5000"
 
-// custom message
-const internalErrorMessage = "internal server error"
+	// custom message
+	internalErrorMessage = "internal server error"
+)
 
 type jsonHandler struct{}
 
@@ -20,6 +23,10 @@ func newJsonHandler() jsonHandler {
 
 func (j jsonHandler) BadRequest(c echo.Context, message string) error {
 	return c.JSON(http.StatusBadRequest, newResponse().ApiError(badRequestCode, message))
+}
+
+func (j jsonHandler) NotFound(c echo.Context, message string) error {
+	return c.JSON(http.StatusNotFound, newResponse().ApiError(notFoundCode, message))
 }
 
 func (j jsonHandler) InternalServerError(c echo.Context) error {

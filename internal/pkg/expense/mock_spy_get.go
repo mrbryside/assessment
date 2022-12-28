@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"github.com/lib/pq"
+	"github.com/mrbryside/assessment/internal/pkg/util"
 )
 
 // ----------------------------- get success spy ---------------------------------//
@@ -75,5 +76,31 @@ func (s *spyStoreWithGetExpenseFail) Insert(modelId interface{}, args ...any) er
 }
 
 func (s *spyStoreWithGetExpenseFail) IsWasCalled() bool {
+	return s.wasCalled
+}
+
+// ----------------------------- get not found spy ---------------------------------//
+type spyStoreWithGetExpenseNotFound struct {
+	wasCalled bool
+}
+
+func newSpyStoreWithGetExpenseNotFound() *spyStoreWithGetExpenseNotFound {
+	return &spyStoreWithGetExpenseNotFound{wasCalled: false}
+}
+
+func (s *spyStoreWithGetExpenseNotFound) InitStore() error {
+	return nil
+}
+
+func (s *spyStoreWithGetExpenseNotFound) FindOne(rowId int, queryLang string, args ...any) error {
+	s.wasCalled = true
+	return util.Error().DBNotFound
+}
+
+func (s *spyStoreWithGetExpenseNotFound) Insert(modelId interface{}, args ...any) error {
+	return nil
+}
+
+func (s *spyStoreWithGetExpenseNotFound) IsWasCalled() bool {
 	return s.wasCalled
 }

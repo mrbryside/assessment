@@ -15,3 +15,11 @@ func Validator(v *validator.Validate) *customValidator {
 func TestHelper() testHelper {
 	return newTestHelper()
 }
+
+func Error() *customError {
+	return newCustomError()
+}
+
+func CompareError(e1 error, e2 error) bool {
+	return e1.Error() == e2.Error()
+}

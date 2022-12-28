@@ -21,12 +21,16 @@ var getTests = []struct {
 	{name: "should return required path params", mock: GetterMock().GetExpenseValidateFailed()},
 	{name: "should return invalid path params", mock: GetterMock().GetExpenseBindFailed()},
 	{name: "should return internal server error", mock: GetterMock().GetExpenseInternalFailed()},
+	{name: "should return response expense not found", mock: GetterMock().GetExpenseNotFound()},
 }
 
 func TestGetExpense(t *testing.T) {
+	t.Parallel()
 	for _, gtc := range getTests {
 		gtc := gtc
 		t.Run(gtc.name, func(t *testing.T) {
+			// Destructuring mock
+
 			// Arrange
 			m := gtc.mock
 			expenses := NewExpense(m.SpyStore)

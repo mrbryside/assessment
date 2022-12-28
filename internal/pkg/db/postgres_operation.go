@@ -2,7 +2,14 @@ package db
 
 import (
 	"database/sql"
+	"github.com/mrbryside/assessment/internal/pkg/util"
 )
+
+type Store interface {
+	InitStore() error
+	Insert(interface{}, ...any) error
+	FindOne(int, string, ...any) error
+}
 
 func (p *postgres) InitStore() error {
 	pDb, err := sql.Open("postgres", p.url)
@@ -39,8 +46,12 @@ func (p *postgres) FindOne(rowId int, queryLang string, args ...any) error {
 
 	row := stmt.QueryRow(rowId)
 	err = row.Scan(args...)
+	if err != nil && err == sql.ErrNoRows {
+		return util.Error().DBNotFound
+	}
 	if err != nil {
 		return err
 	}
+
 	return nil
 }

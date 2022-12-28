@@ -58,3 +58,16 @@ func (e expenseGetter) GetExpenseInternalFailed() expenseMock {
 	s := newSpyStoreWithGetExpenseFail()
 	return newExpenseMock(s, queryId, expenseRespJSON, http.StatusInternalServerError, called)
 }
+
+func (e expenseGetter) GetExpenseNotFound() expenseMock {
+	var (
+		queryId         = "5"
+		expenseRespJSON = `{
+			"code": "4004",
+			"message": "expense not found"
+		}`
+	)
+
+	s := newSpyStoreWithGetExpenseNotFound()
+	return newExpenseMock(s, queryId, expenseRespJSON, http.StatusNotFound, called)
+}

@@ -30,6 +30,9 @@ func (e *expense) GetExpenseHandler(c echo.Context) error {
 		&model.Note,
 		pq.Array(&model.Tags),
 	)
+	if err != nil && util.CompareError(err, util.Error().DBNotFound) {
+		return util.JsonHandler().NotFound(c, "expense not found")
+	}
 	if err != nil {
 		return util.JsonHandler().InternalServerError(c)
 	}
