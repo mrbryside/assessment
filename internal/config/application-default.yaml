@@ -1,0 +1,5 @@
+port: 2565
+database:
+  driver: "postgres"
+  url: "db-url"
+  timeout: 10
