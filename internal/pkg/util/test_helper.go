@@ -1,7 +1,6 @@
 package util
 
 import (
-	"encoding/json"
 	"fmt"
 	"github.com/go-playground/validator"
 	"github.com/labstack/echo/v4"
@@ -17,19 +16,6 @@ import (
 const (
 	serverPort = ":2565"
 )
-
-type httpResponse struct {
-	*http.Response
-	err error
-}
-
-func (r *httpResponse) Decode(v interface{}) error {
-	if r.err != nil {
-		return r.err
-	}
-
-	return json.NewDecoder(r.Body).Decode(v)
-}
 
 type testHelper struct{}
 

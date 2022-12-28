@@ -2,6 +2,12 @@ package expense
 
 import "net/http"
 
+func creationMock() expenseCreator {
+	return expenseCreator{}
+}
+
+type expenseCreator struct{}
+
 func (e expenseCreator) CreateSuccess() expenseMock {
 	var (
 		expenseJSON = `{

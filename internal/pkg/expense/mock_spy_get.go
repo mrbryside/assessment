@@ -22,8 +22,8 @@ func (s *spyStoreWithGetExpenseSuccess) InitStore() error {
 
 func (s *spyStoreWithGetExpenseSuccess) FindOne(rowId int, queryLang string, args ...any) error {
 	s.wasCalled = true
-	var model ModelDto
-	err := json.Unmarshal([]byte(GetterMock().GetExpenseSuccess().Response), &model)
+	var model modelExpense
+	err := json.Unmarshal([]byte(getterMock().GetExpenseSuccess().Response), &model)
 	if err != nil {
 		return err
 	}

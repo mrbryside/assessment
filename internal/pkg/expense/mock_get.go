@@ -4,6 +4,12 @@ import (
 	"net/http"
 )
 
+type expenseGetter struct{}
+
+func getterMock() expenseGetter {
+	return expenseGetter{}
+}
+
 func (e expenseGetter) GetExpenseSuccess() expenseMock {
 	var (
 		queryId         = "5"

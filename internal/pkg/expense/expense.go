@@ -2,7 +2,16 @@ package expense
 
 import "github.com/mrbryside/assessment/internal/pkg/db"
 
-type ModelDto struct {
+type expense struct {
+	store db.Store
+}
+
+func NewExpense(store db.Store) *expense {
+	return &expense{store: store}
+}
+
+// model
+type modelExpense struct {
 	ID     int      `json:"id"`
 	Title  string   `json:"title" validate:"required"`
 	Amount int      `json:"amount" validate:"required"`
@@ -10,8 +19,8 @@ type ModelDto struct {
 	Tags   []string `json:"tags" param:"tags" validate:"required,dive,required"`
 }
 
-func newModelDto() *ModelDto {
-	return &ModelDto{}
+func newModelExpense() *modelExpense {
+	return &modelExpense{}
 }
 
 type paramDto struct {
@@ -20,13 +29,4 @@ type paramDto struct {
 
 func newParamDto() *paramDto {
 	return &paramDto{}
-}
-
-// expense
-type expense struct {
-	store db.Store
-}
-
-func NewExpense(store db.Store) *expense {
-	return &expense{store: store}
 }

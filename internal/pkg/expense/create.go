@@ -8,7 +8,7 @@ import (
 )
 
 func (e *expense) CreateExpenseHandler(c echo.Context) error {
-	model := newModelDto()
+	model := newModelExpense()
 
 	err := c.Bind(model)
 	if err != nil {

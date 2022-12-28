@@ -8,7 +8,7 @@ import (
 )
 
 func (e *expense) GetExpenseHandler(c echo.Context) error {
-	model := newModelDto()
+	model := newModelExpense()
 	param := newParamDto()
 
 	err := c.Bind(param)
@@ -30,7 +30,7 @@ func (e *expense) GetExpenseHandler(c echo.Context) error {
 		&model.Note,
 		pq.Array(&model.Tags),
 	)
-	if err != nil && util.CompareError(err, util.Error().DBNotFound) {
+	if err != nil && util.Error().CompareError(err, util.Error().DBNotFound) {
 		return util.JsonHandler().NotFound(c, "expense not found")
 	}
 	if err != nil {

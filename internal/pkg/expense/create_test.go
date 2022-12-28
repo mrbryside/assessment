@@ -17,10 +17,10 @@ var createTests = []struct {
 	name string
 	mock expenseMock
 }{
-	{name: "should return response expense data", mock: CreationMock().CreateSuccess()},
-	{name: "should return response bad request invalid", mock: CreationMock().CreateBindFail()},
-	{name: "should return response bad request required field", mock: CreationMock().CreateValidateFail()},
-	{name: "should return response internal server error", mock: CreationMock().CreateInternalFail()},
+	{name: "should return response expense data", mock: creationMock().CreateSuccess()},
+	{name: "should return response bad request invalid", mock: creationMock().CreateBindFail()},
+	{name: "should return response bad request required field", mock: creationMock().CreateValidateFail()},
+	{name: "should return response internal server error", mock: creationMock().CreateInternalFail()},
 }
 
 func TestCreateExpense(t *testing.T) {

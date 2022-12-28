@@ -17,9 +17,10 @@ func main() {
 
 	// get config
 	port := config.NewProvider().Port
+	dbUrl := config.NewProvider().DbUrl
 
 	// init db to Store
-	db.InitDB(db.NewPostgres(config.NewProvider().DbUrl))
+	db.InitDB(db.NewPostgres(dbUrl))
 
 	// init echo framework
 	e := echo.New()

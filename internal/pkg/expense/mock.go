@@ -5,18 +5,6 @@ const (
 	notCalled = false
 )
 
-type expenseCreator struct{}
-
-func CreationMock() expenseCreator {
-	return expenseCreator{}
-}
-
-type expenseGetter struct{}
-
-func GetterMock() expenseGetter {
-	return expenseGetter{}
-}
-
 type expenseMock struct {
 	SpyStore spyStore
 	Payload  string

@@ -15,8 +15,7 @@ import (
 )
 
 var (
-	mockCreation = CreationMock().CreateSuccess()
-	serverPort   = ":2565"
+	mockCreation = creationMock().CreateSuccess()
 )
 
 func TestItCreateExpense(t *testing.T) {
@@ -40,7 +39,7 @@ var _ = Describe("create expenses", func() {
 			wantTags := []string{"food", "beverage"}
 
 			// Act
-			var e ModelDto
+			var e modelExpense
 			body := bytes.NewBufferString(payload)
 			testHelper := util.TestHelper()
 			res := testHelper.Request(http.MethodPost, testHelper.Uri("expenses"), body)

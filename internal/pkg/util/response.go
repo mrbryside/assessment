@@ -1,11 +1,11 @@
 package util
 
+type response struct{}
+
 type err struct {
 	Code    string `json:"code"`
 	Message string `json:"message"`
 }
-
-type response struct{}
 
 func newResponse() response {
 	return response{}
