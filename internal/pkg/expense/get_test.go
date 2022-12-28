@@ -42,15 +42,18 @@ func TestGetExpense(t *testing.T) {
 
 			wantResp := m.Response
 			wantCode := m.Code
+			wantCalled := m.Called
 
 			// Act
 			gotResp := rec.Body.String()
 			gotStatus := c.Response().Status
 			gotError := err
+			gotCalled := m.SpyStore.IsWasCalled()
 
 			// Assert
 			assert.Nil(t, gotError)
 			assert.JSONEq(t, gotResp, wantResp)
+			assert.Equal(t, gotCalled, wantCalled)
 			assert.Equal(t, gotStatus, wantCode)
 		})
 	}

@@ -30,7 +30,7 @@ func (e expenseGetter) GetExpenseValidateFailed() expenseMock {
 	)
 
 	s := newSpyStoreWithGetExpenseSuccess()
-	return newExpenseMock(s, queryId, expenseRespJSON, http.StatusBadRequest, called)
+	return newExpenseMock(s, queryId, expenseRespJSON, http.StatusBadRequest, notCalled)
 }
 
 func (e expenseGetter) GetExpenseBindFailed() expenseMock {
@@ -43,5 +43,5 @@ func (e expenseGetter) GetExpenseBindFailed() expenseMock {
 	)
 
 	s := newSpyStoreWithGetExpenseSuccess()
-	return newExpenseMock(s, queryId, expenseRespJSON, http.StatusBadRequest, called)
+	return newExpenseMock(s, queryId, expenseRespJSON, http.StatusBadRequest, notCalled)
 }
