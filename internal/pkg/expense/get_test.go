@@ -3,6 +3,7 @@
 package expense
 
 import (
+	"fmt"
 	"github.com/go-playground/validator"
 	"github.com/labstack/echo/v4"
 	"github.com/mrbryside/assessment/internal/pkg/expense/mock"
@@ -18,6 +19,7 @@ var getTests = []struct {
 	mock mock.GetExpenseMock
 }{
 	{name: "should return response expense data", mock: mock.GetterMock().GetExpenseSuccess()},
+	{name: "should return required path params", mock: mock.GetterMock().GetExpenseParamsFailed()},
 }
 
 func TestGetExpense(t *testing.T) {
@@ -29,10 +31,13 @@ func TestGetExpense(t *testing.T) {
 			expenses := NewExpense(m.SpyStore)
 			e := echo.New()
 			e.Validator = util.Validator(validator.New())
-			req := httptest.NewRequest(http.MethodGet, "/expenses/5", nil)
+			req := httptest.NewRequest(http.MethodGet, fmt.Sprintf("/expenses/%s", m.Payload), nil)
 			req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
 			rec := httptest.NewRecorder()
 			c := e.NewContext(req, rec)
+			c.SetPath("/expenses/:id")
+			c.SetParamNames("id")
+			c.SetParamValues(m.Payload)
 			err := expenses.GetExpenseHandler(c)
 
 			wantResp := m.Response

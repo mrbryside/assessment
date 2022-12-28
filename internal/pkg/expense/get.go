@@ -7,7 +7,13 @@ import (
 
 func (e *expense) GetExpenseHandler(c echo.Context) error {
 	modelDto := newModelDto()
-	_ = c.Param("id")
+	param := newParamDto()
+	_ = c.Bind(param)
+
+	err := c.Validate(param)
+	if err != nil {
+		return util.JsonHandler().BadRequest(c, err.Error())
+	}
 
 	_ = e.store.FindOne(1, modelDto, "SELECT id, name, age FROM users where id=$1")
 
