@@ -129,7 +129,7 @@ func TestCreateExpense(t *testing.T) {
 
 // --- create fail spy
 func newSpyCreateFail() db.StoreSpy {
-	return db.NewStoreSpy(insertFail, nil)
+	return db.NewStoreSpy(insertFail, nil, nil)
 }
 
 func insertFail(args ...any) error {
@@ -138,7 +138,7 @@ func insertFail(args ...any) error {
 
 // --- create success spy
 func newSpyCreateSuccess() db.StoreSpy {
-	return db.NewStoreSpy(insertSuccess, nil)
+	return db.NewStoreSpy(insertSuccess, nil, nil)
 }
 
 func insertSuccess(args ...any) error {

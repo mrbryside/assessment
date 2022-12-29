@@ -9,6 +9,7 @@ type Store interface {
 	Script() script
 	Insert(script string, args ...interface{}) error
 	FindOne(int, string, ...interface{}) error
+	Update(script string, args ...interface{}) error
 }
 
 var DB Store

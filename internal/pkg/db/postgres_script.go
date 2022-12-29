@@ -26,3 +26,7 @@ func (q script) InsertExpense() string {
 func (q script) GetExpense() string {
 	return "SELECT id, title, amount, note, tags FROM expenses where id=$1"
 }
+
+func (q script) UpdateExpense() string {
+	return "UPDATE expenses SET title=$2, amount=$3, note=$4, tags=$5 WHERE id=$1"
+}

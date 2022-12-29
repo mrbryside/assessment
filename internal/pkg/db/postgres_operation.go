@@ -52,3 +52,18 @@ func (p *postgres) FindOne(rowId int, script string, args ...interface{}) error 
 
 	return nil
 }
+
+func (p *postgres) Update(script string, args ...interface{}) error {
+
+	stmt, err := p.db.Prepare(script)
+	if err != nil {
+		return err
+	}
+
+	_, err = stmt.Exec(args...)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}

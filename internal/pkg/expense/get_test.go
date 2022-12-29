@@ -127,7 +127,7 @@ func TestGetExpense(t *testing.T) {
 
 // --- get fail spy
 func newSpyGetFail() db.StoreSpy {
-	return db.NewStoreSpy(nil, findOneFail)
+	return db.NewStoreSpy(nil, findOneFail, nil)
 }
 
 func findOneFail(args ...any) error {
@@ -136,7 +136,7 @@ func findOneFail(args ...any) error {
 
 // --- get not found spy
 func newSpyGetNotFound() db.StoreSpy {
-	return db.NewStoreSpy(nil, findOneNotFound)
+	return db.NewStoreSpy(nil, findOneNotFound, nil)
 }
 
 func findOneNotFound(args ...any) error {
@@ -145,7 +145,7 @@ func findOneNotFound(args ...any) error {
 
 // --- get success spy
 func newSpyGetSuccess() db.StoreSpy {
-	return db.NewStoreSpy(nil, findOneSuccess)
+	return db.NewStoreSpy(nil, findOneSuccess, nil)
 }
 
 func findOneSuccess(args ...any) error {

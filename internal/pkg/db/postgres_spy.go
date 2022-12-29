@@ -9,12 +9,18 @@ type storeSpy struct {
 	wasCalled bool
 	insert    func(...interface{}) error
 	findOne   func(...interface{}) error
+	update    func(...interface{}) error
 }
 
-func NewStoreSpy(insert func(...interface{}) error, findOne func(...interface{}) error) *storeSpy {
+func NewStoreSpy(
+	insert func(...interface{}) error,
+	findOne func(...interface{}) error,
+	update func(...interface{}) error,
+) *storeSpy {
 	return &storeSpy{
 		insert:  insert,
 		findOne: findOne,
+		update:  update,
 	}
 }
 
@@ -36,6 +42,11 @@ func (f *storeSpy) Insert(script string, args ...interface{}) error {
 func (f *storeSpy) FindOne(rowId int, queryLang string, args ...interface{}) error {
 	f.wasCalled = true
 	return f.findOne(args...)
+}
+
+func (f *storeSpy) Update(script string, args ...interface{}) error {
+	f.wasCalled = true
+	return f.update(args...)
 }
 
 func (f *storeSpy) IsWasCalled() bool {

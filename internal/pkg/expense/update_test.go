@@ -27,7 +27,7 @@ var updateTests = []struct {
 	{
 		name:  "should return response updated expense json",
 		code:  http.StatusOK,
-		spy:   nil,
+		spy:   newSpyUpdateSuccess(),
 		param: "1",
 		payload: `{
 			"title": "strawberry smoothie",
@@ -70,16 +70,28 @@ func TestUpdateExpense(t *testing.T) {
 
 			wantResp := utc.response
 			wantCode := utc.code
+			wantCalled := utc.called
 
 			// Act
 			gotErr := err
 			gotResp := rec.Body.String()
 			gotCode := c.Response().Status
+			gotCalled := utc.spy.IsWasCalled()
 
 			// Assert
 			assert.Nil(t, gotErr)
 			assert.JSONEq(t, wantResp, gotResp)
 			assert.Equal(t, wantCode, gotCode)
+			assert.Equal(t, wantCalled, gotCalled)
 		})
 	}
+}
+
+// --- update success spy
+func newSpyUpdateSuccess() db.StoreSpy {
+	return db.NewStoreSpy(nil, nil, updateSuccess)
+}
+
+func updateSuccess(args ...any) error {
+	return nil
 }

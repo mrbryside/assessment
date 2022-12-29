@@ -12,6 +12,7 @@ func (e *expense) CreateExpenseHandler(c echo.Context) error {
 	if err != nil {
 		return util.JsonHandler().BadRequest(c, "Request parameters are invalid.")
 	}
+
 	err = c.Validate(model)
 	if err != nil {
 		return util.JsonHandler().BadRequest(c, err.Error())
