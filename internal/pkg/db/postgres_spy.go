@@ -22,6 +22,10 @@ func (f *storeSpy) InitStore() error {
 	return nil
 }
 
+func (f *storeSpy) Script() script {
+	return newScript()
+}
+
 func (f *storeSpy) Insert(modelId interface{}, args ...any) error {
 	f.wasCalled = true
 	return f.insert(modelId)

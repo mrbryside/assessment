@@ -3,7 +3,6 @@ package expense
 import (
 	"github.com/labstack/echo/v4"
 	"github.com/lib/pq"
-	"github.com/mrbryside/assessment/internal/pkg/db"
 	"github.com/mrbryside/assessment/internal/pkg/util"
 )
 
@@ -23,7 +22,7 @@ func (e *expense) GetExpenseHandler(c echo.Context) error {
 
 	err = e.store.FindOne(
 		param.ID,
-		db.Script().GetExpense(),
+		e.store.Script().GetExpense(),
 		&model.ID,
 		&model.Title,
 		&model.Amount,

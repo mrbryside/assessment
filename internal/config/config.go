@@ -27,7 +27,7 @@ type provider struct {
 
 func NewProvider() provider {
 	return provider{
-		viper.GetString("database.url"),
-		fmt.Sprintf(":%v", viper.GetInt("port")),
+		DbUrl: viper.GetString("database.url"),
+		Port:  fmt.Sprintf(":%v", viper.GetInt("port")),
 	}
 }

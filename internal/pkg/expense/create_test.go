@@ -64,13 +64,12 @@ var createTests = []struct {
 		spy:  newSpyCreateSuccess(),
 		payload: `{
 			"title": "strawberry smoothie",
-    		"amount": "12345",
     		"note": "night market promotion discount 10 bath", 
     		"tags": ["food", "beverage"]
 		}`,
 		response: `{
 			"code": "4000",
-			"message": "Request parameters are invalid."
+			"message": "Amount is a required field"
 		}`,
 		called: false,
 	},

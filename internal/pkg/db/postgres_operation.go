@@ -5,12 +5,6 @@ import (
 	"github.com/mrbryside/assessment/internal/pkg/util"
 )
 
-type Store interface {
-	InitStore() error
-	Insert(interface{}, ...any) error
-	FindOne(int, string, ...any) error
-}
-
 func (p *postgres) InitStore() error {
 	pDb, err := sql.Open("postgres", p.url)
 	if err != nil {
@@ -24,6 +18,9 @@ func (p *postgres) InitStore() error {
 	return nil
 }
 
+func (p *postgres) Script() script {
+	return newScript()
+}
 func (p *postgres) Insert(modelId interface{}, args ...any) error {
 	// destructuring args
 	queryLang := args[0].(string)
