@@ -3,9 +3,13 @@
 package expense
 
 import (
+	"encoding/json"
+	"errors"
 	"fmt"
 	"github.com/go-playground/validator"
 	"github.com/labstack/echo/v4"
+	"github.com/lib/pq"
+	"github.com/mrbryside/assessment/internal/pkg/db"
 	"github.com/mrbryside/assessment/internal/pkg/util"
 	"github.com/stretchr/testify/assert"
 	"net/http"
@@ -13,32 +17,36 @@ import (
 	"testing"
 )
 
+const (
+	getResponse = `{
+		"id": 5,
+		"title": "strawberry smoothie",
+		"amount": 79,
+		"note": "night market promotion discount 10 bath",
+		"tags": ["food", "beverage"]
+	}`
+)
+
 var getTests = []struct {
 	name     string
 	code     int
-	spy      spyStore
+	spy      db.StoreSpy
 	payload  string
 	response string
 	called   bool
 }{
 	{
-		name:    "should return response expense json",
-		code:    http.StatusOK,
-		spy:     newSpyStoreWithGetExpenseSuccess(),
-		payload: "5",
-		response: `{
-			"id": 5,
-			"title": "strawberry smoothie",
-    		"amount": 79,
-    		"note": "night market promotion discount 10 bath",
-    		"tags": ["food", "beverage"]
-		}`,
-		called: true,
+		name:     "should return response expense json",
+		code:     http.StatusOK,
+		spy:      newSpyGetSuccess(),
+		payload:  "5",
+		response: getResponse,
+		called:   true,
 	},
 	{
 		name:    "should return response required path params",
 		code:    http.StatusBadRequest,
-		spy:     newSpyStoreWithGetExpenseSuccess(),
+		spy:     newSpyGetSuccess(),
 		payload: "",
 		response: `{
 			"code": "4000",
@@ -49,7 +57,7 @@ var getTests = []struct {
 	{
 		name:    "should return response invalid path params",
 		code:    http.StatusBadRequest,
-		spy:     newSpyStoreWithGetExpenseSuccess(),
+		spy:     newSpyGetSuccess(),
 		payload: "error",
 		response: `{
 			"code": "4000",
@@ -60,7 +68,7 @@ var getTests = []struct {
 	{
 		name:    "should return internal server error",
 		code:    http.StatusInternalServerError,
-		spy:     newSpyStoreWithGetExpenseFail(),
+		spy:     newSpyGetFail(),
 		payload: "5",
 		response: `{
 			"code": "5000",
@@ -71,7 +79,7 @@ var getTests = []struct {
 	{
 		name:    "should return response expense not found",
 		code:    http.StatusNotFound,
-		spy:     newSpyStoreWithGetExpenseNotFound(),
+		spy:     newSpyGetNotFound(),
 		payload: "5",
 		response: `{
 			"code": "4004",
@@ -115,4 +123,51 @@ func TestGetExpense(t *testing.T) {
 			assert.Equal(t, wantCode, gotStatus)
 		})
 	}
+}
+
+// --- get fail spy
+func newSpyGetFail() db.StoreSpy {
+	return db.NewStoreSpy(nil, findOneFail)
+}
+
+func findOneFail(args ...any) error {
+	return errors.New("error")
+}
+
+// --- get not found spy
+func newSpyGetNotFound() db.StoreSpy {
+	return db.NewStoreSpy(nil, findOneNotFound)
+}
+
+func findOneNotFound(args ...any) error {
+	return util.Error().DBNotFound
+}
+
+// --- get success spy
+func newSpyGetSuccess() db.StoreSpy {
+	return db.NewStoreSpy(nil, findOneSuccess)
+}
+
+func findOneSuccess(args ...any) error {
+	var model modelExpense
+	err := json.Unmarshal([]byte(getResponse), &model)
+	if err != nil {
+		return err
+	}
+	id, _ := args[0].(*int)
+	*id = model.ID
+
+	title, _ := args[1].(*string)
+	*title = model.Title
+
+	amount, _ := args[2].(*int)
+	*amount = model.Amount
+
+	note, _ := args[3].(*string)
+	*note = model.Note
+
+	tags, _ := args[4].(*pq.StringArray)
+	*tags = model.Tags
+
+	return nil
 }

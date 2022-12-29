@@ -29,7 +29,7 @@ func (f *storeSpy) Insert(modelId interface{}, args ...any) error {
 
 func (f *storeSpy) FindOne(rowId int, queryLang string, args ...any) error {
 	f.wasCalled = true
-	return f.findOne(rowId, queryLang, args)
+	return f.findOne(args...)
 }
 
 func (f *storeSpy) IsWasCalled() bool {

@@ -18,7 +18,7 @@ import (
 var createTests = []struct {
 	name     string
 	code     int
-	spy      spyStore
+	spy      db.StoreSpy
 	payload  string
 	response string
 	called   bool
