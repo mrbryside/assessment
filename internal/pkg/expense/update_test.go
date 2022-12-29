@@ -15,16 +15,6 @@ import (
 	"testing"
 )
 
-const (
-	updateResponse = `{
-		"id": 0,
-		"title": "",
-		"amount": 0,
-		"note": "",
-		"tags": []
-	}`
-)
-
 var updateTests = []struct {
 	name     string
 	code     int
@@ -35,13 +25,24 @@ var updateTests = []struct {
 	called   bool
 }{
 	{
-		name:     "should return response expense json",
-		code:     http.StatusOK,
-		spy:      nil,
-		param:    "1",
-		payload:  updateResponse,
-		response: updateResponse,
-		called:   true,
+		name:  "should return response updated expense json",
+		code:  http.StatusOK,
+		spy:   nil,
+		param: "1",
+		payload: `{
+			"title": "strawberry smoothie",
+			"amount": 79,
+			"note": "night market promotion discount 10 bath", 
+			"tags": ["food", "beverage"]
+		}`,
+		response: `{
+			"id": 1,
+			"title": "strawberry smoothie",
+			"amount": 79,
+			"note": "night market promotion discount 10 bath", 
+			"tags": ["food", "beverage"]
+		}`,
+		called: true,
 	},
 }
 
@@ -67,16 +68,17 @@ func TestUpdateExpense(t *testing.T) {
 			c.SetParamValues(utc.param)
 			err := expenses.UpdateExpenseHandler(c)
 
-			_ = utc.response
+			wantResp := utc.response
 			wantCode := utc.code
 
 			// Act
 			gotErr := err
-			_ = rec.Body.String()
+			gotResp := rec.Body.String()
 			gotCode := c.Response().Status
 
 			// Assert
 			assert.Nil(t, gotErr)
+			assert.JSONEq(t, wantResp, gotResp)
 			assert.Equal(t, wantCode, gotCode)
 		})
 	}
