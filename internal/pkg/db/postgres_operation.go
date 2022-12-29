@@ -21,13 +21,13 @@ func (p *postgres) InitStore() error {
 func (p *postgres) Script() script {
 	return newScript()
 }
-func (p *postgres) Insert(modelId interface{}, args ...any) error {
-	// destructuring args
-	queryLang := args[0].(string)
-	otherArgs := args[1:]
+func (p *postgres) Insert(script string, args ...interface{}) error {
+	// initial argument from model without ID (args index 0)
+	modelId := args[0]
+	otherModel := args[1:]
 
 	// insert entity
-	row := p.db.QueryRow(queryLang, otherArgs...)
+	row := p.db.QueryRow(script, otherModel...)
 
 	err := row.Scan(modelId)
 	if err != nil {
@@ -35,8 +35,8 @@ func (p *postgres) Insert(modelId interface{}, args ...any) error {
 	}
 	return nil
 }
-func (p *postgres) FindOne(rowId int, queryLang string, args ...any) error {
-	stmt, err := p.db.Prepare(queryLang)
+func (p *postgres) FindOne(rowId int, script string, args ...interface{}) error {
+	stmt, err := p.db.Prepare(script)
 	if err != nil {
 		return err
 	}

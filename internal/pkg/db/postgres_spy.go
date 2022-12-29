@@ -7,11 +7,11 @@ type StoreSpy interface {
 
 type storeSpy struct {
 	wasCalled bool
-	insert    func(...any) error
-	findOne   func(...any) error
+	insert    func(...interface{}) error
+	findOne   func(...interface{}) error
 }
 
-func NewStoreSpy(insert func(...any) error, findOne func(...any) error) *storeSpy {
+func NewStoreSpy(insert func(...interface{}) error, findOne func(...interface{}) error) *storeSpy {
 	return &storeSpy{
 		insert:  insert,
 		findOne: findOne,
@@ -26,12 +26,14 @@ func (f *storeSpy) Script() script {
 	return newScript()
 }
 
-func (f *storeSpy) Insert(modelId interface{}, args ...any) error {
+func (f *storeSpy) Insert(script string, args ...interface{}) error {
+	// initial id from first model arguments
+	modelId := args[0]
 	f.wasCalled = true
 	return f.insert(modelId)
 }
 
-func (f *storeSpy) FindOne(rowId int, queryLang string, args ...any) error {
+func (f *storeSpy) FindOne(rowId int, queryLang string, args ...interface{}) error {
 	f.wasCalled = true
 	return f.findOne(args...)
 }

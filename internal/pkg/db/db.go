@@ -7,8 +7,8 @@ import (
 type Store interface {
 	InitStore() error
 	Script() script
-	Insert(interface{}, ...any) error
-	FindOne(int, string, ...any) error
+	Insert(script string, args ...interface{}) error
+	FindOne(int, string, ...interface{}) error
 }
 
 var DB Store

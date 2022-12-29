@@ -15,5 +15,7 @@ func (e *expense) UpdateExpenseHandler(c echo.Context) error {
 
 	model.ID = id
 
+	//-TODO - implement store
+
 	return util.JsonHandler().Success(c, model)
 }

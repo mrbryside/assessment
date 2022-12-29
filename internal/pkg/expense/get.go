@@ -2,7 +2,6 @@ package expense
 
 import (
 	"github.com/labstack/echo/v4"
-	"github.com/lib/pq"
 	"github.com/mrbryside/assessment/internal/pkg/util"
 )
 
@@ -23,11 +22,7 @@ func (e *expense) GetExpenseHandler(c echo.Context) error {
 	err = e.store.FindOne(
 		param.ID,
 		e.store.Script().GetExpense(),
-		&model.ID,
-		&model.Title,
-		&model.Amount,
-		&model.Note,
-		pq.Array(&model.Tags),
+		model.Arguments()...,
 	)
 	if err != nil && util.Error().CompareError(err, util.Error().DBNotFound) {
 		return util.JsonHandler().NotFound(c, "expense not found")

@@ -21,7 +21,5 @@ services:
       POSTGRES_PASSWORD: root
       POSTGRES_DB: test-db
     restart: on-failure
-    volumes:
-      - ./db:/docker-entrypoint-initdb.d/
     networks:
       - integration-test
