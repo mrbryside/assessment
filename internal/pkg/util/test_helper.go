@@ -1,7 +1,7 @@
 package util
 
 import (
-	"encoding/json"
+	"bytes"
 	"fmt"
 	"github.com/go-playground/validator"
 	"github.com/labstack/echo/v4"
@@ -17,19 +17,6 @@ import (
 const (
 	serverPort = ":2565"
 )
-
-type httpResponse struct {
-	*http.Response
-	err error
-}
-
-func (r *httpResponse) Decode(v interface{}) error {
-	if r.err != nil {
-		return r.err
-	}
-
-	return json.NewDecoder(r.Body).Decode(v)
-}
 
 type testHelper struct{}
 
@@ -56,12 +43,11 @@ func (t testHelper) Request(method, url string, body io.Reader) *httpResponse {
 	return &httpResponse{res, err}
 }
 
-func (t testHelper) InitItEcho(h echo.HandlerFunc, path string) *echo.Echo {
-	eh := echo.New()
+func (t testHelper) InitItEcho(eh *echo.Echo, setRoute func()) *echo.Echo {
 	go func(e *echo.Echo) {
 		e.Validator = Validator(validator.New())
-		e.POST(path, h)
-		e.Start(serverPort)
+		setRoute()
+		eh.Start(serverPort)
 	}(eh)
 	for {
 		conn, err := net.DialTimeout("tcp", fmt.Sprintf("localhost%v", serverPort), 30*time.Second)
@@ -74,4 +60,12 @@ func (t testHelper) InitItEcho(h echo.HandlerFunc, path string) *echo.Echo {
 		}
 	}
 	return eh
+}
+func (t testHelper) Seeder(model interface{}, payload string, args ...string) error {
+	body := bytes.NewBufferString(payload)
+	err := t.Request(http.MethodPost, t.Uri(args...), body).Decode(&model)
+	if err != nil {
+		return err
+	}
+	return nil
 }

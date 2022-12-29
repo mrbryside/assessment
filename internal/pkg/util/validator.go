@@ -18,12 +18,9 @@ func (c customValidator) Validate(i interface{}) error {
 	// Validate the input using the validation package
 	err := c.validator.Struct(i)
 	if err == nil {
-		// If the input is valid, return nil
 		return nil
 	}
 
-	// If the input is not valid, create a new validation error
-	// Iterate over the validation errors
 	var message string
 	for _, e := range err.(validator.ValidationErrors) {
 		// Customize the error message for each validation error

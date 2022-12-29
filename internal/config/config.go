@@ -16,7 +16,7 @@ func Init() {
 
 	err := viper.ReadInConfig()
 	if err != nil {
-		log.Println("Not found local env - Use only the environment variable")
+		log.Println("Not found application.yaml - Use only the environment variable")
 	}
 }
 

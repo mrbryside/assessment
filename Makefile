@@ -6,11 +6,12 @@ integration-test-down:
 	DOCKER_BUILDKIT=0 docker-compose -f Docker-compose-test.yaml down
 
 unit-test:
-	go clean -testcache && go test -v -tags=unit ./...
+	go clean -testcache && go test -v -tags=unit ./... -cover
 
 docker-build:
 	docker build -t assessment/expenses:latest .
 
+# usage => make docker-run DATABASE_URL="url" PORT=2565
 docker-run:
 ifneq ($(and $(DATABASE_URL),$(PORT)),)
 	docker run -d -p $(PORT):$(PORT) -e DATABASE_URL=$(DATABASE_URL) -e PORT=$(PORT) --name assessment assessment/expenses:latest

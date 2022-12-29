@@ -6,11 +6,6 @@ import (
 
 var DB Store
 
-type Store interface {
-	InitStore() error
-	Insert(interface{}, ...any) error
-}
-
 func InitDB(db Store) {
 	err := db.InitStore()
 

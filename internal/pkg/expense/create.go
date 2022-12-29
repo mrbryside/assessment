@@ -3,12 +3,12 @@ package expense
 import (
 	"github.com/labstack/echo/v4"
 	"github.com/lib/pq"
-	"github.com/mrbryside/assessment/internal/pkg/db/postgres"
+	"github.com/mrbryside/assessment/internal/pkg/db"
 	"github.com/mrbryside/assessment/internal/pkg/util"
 )
 
 func (e *expense) CreateExpenseHandler(c echo.Context) error {
-	model := newModelDto()
+	model := newModelExpense()
 
 	err := c.Bind(model)
 	if err != nil {
@@ -21,7 +21,7 @@ func (e *expense) CreateExpenseHandler(c echo.Context) error {
 
 	err = e.store.Insert(
 		&model.ID,
-		postgres.Script().InsertExpense(),
+		db.Script().InsertExpense(),
 		model.Title,
 		model.Amount,
 		model.Note,
