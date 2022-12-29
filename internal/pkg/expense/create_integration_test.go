@@ -28,6 +28,7 @@ func TestIntegrationCreateExpense(t *testing.T) {
 	// Setup server
 	db.InitDB(db.NewPostgres("postgresql://root:root@db/test-db?sslmode=disable"))
 	expenses := NewExpense(db.DB)
+	th := util.TestHelper()
 	eh := echo.New()
 	eh = util.TestHelper().InitItEcho(eh, func() {
 		eh.POST("/expenses", expenses.CreateExpenseHandler)
@@ -44,8 +45,7 @@ func TestIntegrationCreateExpense(t *testing.T) {
 	// Act
 	var e modelExpense
 	body := bytes.NewBufferString(payload)
-	testHelper := util.TestHelper()
-	res := testHelper.Request(http.MethodPost, testHelper.Uri("expenses"), body)
+	res := th.Request(http.MethodPost, th.Uri("expenses"), body)
 	err := res.Decode(&e)
 
 	gotErr := err

@@ -32,8 +32,9 @@ func TestIntegrationGetExpense(t *testing.T) {
 	// Setup server
 	db.InitDB(db.NewPostgres("postgresql://root:root@db/test-db?sslmode=disable"))
 	expenses := NewExpense(db.DB)
+	th := util.TestHelper()
 	eh := echo.New()
-	eh = util.TestHelper().InitItEcho(eh, func() {
+	eh = th.InitItEcho(eh, func() {
 		eh.POST("/expenses", expenses.CreateExpenseHandler)
 		eh.GET("/expenses/:id", expenses.GetExpenseHandler)
 	})
@@ -46,7 +47,6 @@ func TestIntegrationGetExpense(t *testing.T) {
 	wantTags := []string{"food", "beverage"}
 
 	// Act
-	th := util.TestHelper()
 	err := th.Seeder(&created, getBody, "expenses")
 	if err != nil {
 		t.Fatal("can't create expense:", err)

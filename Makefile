@@ -8,6 +8,9 @@ integration-test-down:
 unit-test:
 	go clean -testcache && go test -v -tags=unit ./... -cover
 
+unit-test-only:
+	go clean -testcache && go test -v -tags=only ./... -cover
+
 docker-build:
 	docker build -t assessment/expenses:latest .
 
