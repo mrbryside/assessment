@@ -37,16 +37,6 @@ func (m *modelExpense) Arguments() []interface{} {
 	)
 }
 
-func (m *modelExpense) Arguments2() []interface{} {
-	return util.Arguments(
-		m.ID,
-		m.Title,
-		m.Amount,
-		m.Note,
-		pq.Array(m.Tags),
-	)
-}
-
 type paramDto struct {
 	ID int `json:"id" param:"id" validate:"required"`
 }
