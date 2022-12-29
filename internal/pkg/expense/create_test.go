@@ -3,8 +3,10 @@
 package expense
 
 import (
+	"errors"
 	"github.com/go-playground/validator"
 	"github.com/labstack/echo/v4"
+	"github.com/mrbryside/assessment/internal/pkg/db"
 	"github.com/mrbryside/assessment/internal/pkg/util"
 	"github.com/stretchr/testify/assert"
 	"net/http"
@@ -24,7 +26,7 @@ var createTests = []struct {
 	{
 		name: "should return expense response",
 		code: http.StatusCreated,
-		spy:  newSpyStoreWithCreateSuccess(),
+		spy:  newSpyCreateSuccess(),
 		payload: `{
 			"title": "strawberry smoothie",
     		"amount": 79,
@@ -43,7 +45,7 @@ var createTests = []struct {
 	{
 		name: "should return bad request response",
 		code: http.StatusBadRequest,
-		spy:  newSpyStoreWithGetExpenseSuccess(),
+		spy:  newSpyCreateSuccess(),
 		payload: `{
 			"title": "strawberry smoothie",
     		"amount": "12345",
@@ -59,7 +61,7 @@ var createTests = []struct {
 	{
 		name: "should return bad request required field response",
 		code: http.StatusBadRequest,
-		spy:  newSpyStoreWithGetExpenseSuccess(),
+		spy:  newSpyCreateSuccess(),
 		payload: `{
 			"title": "strawberry smoothie",
     		"amount": "12345",
@@ -75,7 +77,7 @@ var createTests = []struct {
 	{
 		name: "should return response internal server error",
 		code: http.StatusInternalServerError,
-		spy:  newSpyStoreWithCreateFail(),
+		spy:  newSpyCreateFail(),
 		payload: `{
 			"title": "strawberry smoothie",
 			"amount": 79,
@@ -124,4 +126,25 @@ func TestCreateExpense(t *testing.T) {
 
 		})
 	}
+}
+
+// --- create fail spy
+func newSpyCreateFail() db.StoreSpy {
+	return db.NewStoreSpy(insertFail, nil)
+}
+
+func insertFail(args ...any) error {
+	return errors.New("can't insert")
+}
+
+// --- create success spy
+func newSpyCreateSuccess() db.StoreSpy {
+	return db.NewStoreSpy(insertSuccess, nil)
+}
+
+func insertSuccess(args ...any) error {
+	modelId := args[0]
+	p, _ := modelId.(*int)
+	*p = 5
+	return nil
 }

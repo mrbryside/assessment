@@ -15,13 +15,13 @@ import (
 )
 
 const (
-	createBody = `{
+	createdBody = `{
 		"title": "strawberry smoothie",
 		"amount": 79,
 		"note": "night market promotion discount 10 bath",
 		"tags": ["food", "beverage"]
 	}`
-	createCode = http.StatusCreated
+	createdCode = http.StatusCreated
 )
 
 func TestIntegrationCreateExpense(t *testing.T) {
@@ -34,8 +34,8 @@ func TestIntegrationCreateExpense(t *testing.T) {
 	})
 
 	// Arrange
-	payload := createBody
-	wantCode := createCode
+	payload := createdBody
+	wantCode := createdCode
 	wantTitle := "strawberry smoothie"
 	wantAmount := 79
 	wantNote := "night market promotion discount 10 bath"
@@ -66,5 +66,4 @@ func TestIntegrationCreateExpense(t *testing.T) {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 	err = eh.Shutdown(ctx)
-
 }
