@@ -14,39 +14,105 @@ import (
 )
 
 var createTests = []struct {
-	name string
-	mock mock
+	name     string
+	code     int
+	spy      spyStore
+	payload  string
+	response string
+	called   bool
 }{
-	{name: "should return response expense data", mock: creationMock().CreateSuccess()},
-	{name: "should return response bad request invalid", mock: creationMock().CreateBindFail()},
-	{name: "should return response bad request required field", mock: creationMock().CreateValidateFail()},
-	{name: "should return response internal server error", mock: creationMock().CreateInternalFail()},
+	{
+		name: "should return expense response",
+		code: http.StatusCreated,
+		spy:  newSpyStoreWithCreateSuccess(),
+		payload: `{
+			"title": "strawberry smoothie",
+    		"amount": 79,
+    		"note": "night market promotion discount 10 bath", 
+    		"tags": ["food", "beverage"]
+		}`,
+		response: `{
+			"id": 5,
+			"title": "strawberry smoothie",
+    		"amount": 79,
+    		"note": "night market promotion discount 10 bath",
+    		"tags": ["food", "beverage"]
+		}`,
+		called: true,
+	},
+	{
+		name: "should return bad request response",
+		code: http.StatusBadRequest,
+		spy:  newSpyStoreWithGetExpenseSuccess(),
+		payload: `{
+			"title": "strawberry smoothie",
+    		"amount": "12345",
+    		"note": "night market promotion discount 10 bath", 
+    		"tags": ["food", "beverage"]
+		}`,
+		response: `{
+			"code": "4000",
+			"message": "Request parameters are invalid."
+		}`,
+		called: false,
+	},
+	{
+		name: "should return bad request required field response",
+		code: http.StatusBadRequest,
+		spy:  newSpyStoreWithGetExpenseSuccess(),
+		payload: `{
+			"title": "strawberry smoothie",
+    		"amount": "12345",
+    		"note": "night market promotion discount 10 bath", 
+    		"tags": ["food", "beverage"]
+		}`,
+		response: `{
+			"code": "4000",
+			"message": "Request parameters are invalid."
+		}`,
+		called: false,
+	},
+	{
+		name: "should return response internal server error",
+		code: http.StatusInternalServerError,
+		spy:  newSpyStoreWithCreateFail(),
+		payload: `{
+			"title": "strawberry smoothie",
+			"amount": 79,
+			"note": "night market promotion discount 10 bath",
+			"tags": ["food", "beverage"]
+		}`,
+		response: `{
+			"code": "5000",
+			"message": "internal server error"
+		}`,
+		called: true,
+	},
 }
 
 func TestCreateExpense(t *testing.T) {
 	t.Parallel()
-	for _, tc := range createTests {
-		tc := tc
-		t.Run(tc.name, func(t *testing.T) {
+	for _, ctc := range createTests {
+		ctc := ctc
+		t.Run(ctc.name, func(t *testing.T) {
 			// Arrange
-			m := tc.mock
-			expenses := NewExpense(m.SpyStore)
+			expenses := NewExpense(ctc.spy)
 			e := echo.New()
 			e.Validator = util.Validator(validator.New())
-			req := httptest.NewRequest(http.MethodPost, "/", strings.NewReader(m.Payload))
+			req := httptest.NewRequest(http.MethodPost, "/", strings.NewReader(ctc.payload))
 			req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
 			rec := httptest.NewRecorder()
 			c := e.NewContext(req, rec)
 			err := expenses.CreateExpenseHandler(c)
 
-			wantResp := m.Response
-			wantCalled := m.Called
-			wantCode := m.Code
+			wantResp := ctc.response
+			wantCalled := ctc.called
+			wantCode := ctc.code
 
 			// Act
 			gotErr := err
 			gotResp := rec.Body.String()
-			gotCalled := m.SpyStore.IsWasCalled()
+			gotCalled := ctc.spy.IsWasCalled()
 			gotCode := c.Response().Status
 
 			// Assert

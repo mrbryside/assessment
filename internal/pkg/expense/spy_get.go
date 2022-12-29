@@ -22,8 +22,16 @@ func (s *spyStoreWithGetExpenseSuccess) InitStore() error {
 
 func (s *spyStoreWithGetExpenseSuccess) FindOne(rowId int, queryLang string, args ...any) error {
 	s.wasCalled = true
+
+	response := `{
+		"id": 5,
+		"title": "strawberry smoothie",
+		"amount": 79,
+		"note": "night market promotion discount 10 bath",
+		"tags": ["food", "beverage"]
+	}`
 	var model modelExpense
-	err := json.Unmarshal([]byte(getterMock().GetExpenseSuccess().Response), &model)
+	err := json.Unmarshal([]byte(response), &model)
 	if err != nil {
 		return err
 	}
