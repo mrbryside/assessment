@@ -1,4 +1,4 @@
-//go:build only
+//go:build unit
 
 package expense
 
