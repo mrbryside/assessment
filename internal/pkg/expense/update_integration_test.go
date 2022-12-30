@@ -37,7 +37,11 @@ var (
 
 func TestIntegrationUpdateExpense(t *testing.T) {
 	// Setup server
-	db.InitDB(db.NewPostgres("postgresql://root:root@db/test-db?sslmode=disable"))
+	database, err := db.InitDB(db.NewPostgres("postgresql://root:root@db/test-db?sslmode=disable"))
+	if err != nil {
+		t.Fatal("can't init db")
+	}
+	defer database.Close()
 	expenses := NewExpense(db.DB)
 	th := util.TestHelper()
 	eh := echo.New()
@@ -54,7 +58,7 @@ func TestIntegrationUpdateExpense(t *testing.T) {
 	wantTags := []string{"beverage"}
 
 	// Act
-	err := th.Seeder(&createdExpense, createBody, "expenses")
+	err = th.Seeder(&createdExpense, createBody, "expenses")
 	if err != nil {
 		t.Fatal("can't create expense:", err)
 	}

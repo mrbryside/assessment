@@ -3,6 +3,7 @@
 package expense
 
 import (
+	"errors"
 	"github.com/go-playground/validator"
 	"github.com/labstack/echo/v4"
 	"github.com/mrbryside/assessment/internal/pkg/db"
@@ -31,6 +32,16 @@ var getsTests = []struct {
 			"note": "night market promotion discount 10 bath", 
 			"tags": ["food", "beverage"]
 		}]`,
+		called: true,
+	},
+	{
+		name: "should return response internal server error",
+		code: http.StatusInternalServerError,
+		spy:  newSpyGetsFail(),
+		response: `{
+			"code": "5000",
+			"message": "internal server error"
+		}`,
 		called: true,
 	},
 }
@@ -78,4 +89,13 @@ func findSuccess(args ...any) ([]interface{}, error) {
 
 	results = append(results, model)
 	return results, nil
+}
+
+// --- get expenses fail internal spy
+func newSpyGetsFail() db.StoreSpy {
+	return db.NewStoreSpy(nil, nil, findFail, nil)
+}
+
+func findFail(args ...any) ([]interface{}, error) {
+	return nil, errors.New("error")
 }

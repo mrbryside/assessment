@@ -60,8 +60,7 @@ func (p *postgres) FindOne(rowId int, script string, args ...interface{}) error 
 
 func (p *postgres) Find(script string, model interface{}, args ...interface{}) ([]interface{}, error) {
 	// initial argument from model without ID (args index 0)
-	var results []interface{}
-
+	results := make([]interface{}, 0)
 	stmt, err := p.db.Prepare(script)
 	if err != nil {
 		return nil, err

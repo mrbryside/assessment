@@ -7,7 +7,10 @@ import (
 
 func (e *expense) GetExpensesHandler(c echo.Context) error {
 	model := newModelExpense()
-	// get expenses
-	results, _ := e.store.Find(e.store.Script().GetExpenses(), model, model.Arguments()...)
+
+	results, err := e.store.Find(e.store.Script().GetExpenses(), model, model.Arguments()...)
+	if err != nil {
+		return util.InternalServerError(c)
+	}
 	return util.Success(c, results)
 }
