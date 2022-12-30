@@ -16,7 +16,7 @@ func NewPostgres(url string) *postgres {
 }
 
 func initTable(db *sql.DB) {
-	createTb := Script().CreateExpenseTable()
+	createTb := newScript().CreateExpenseTable()
 	_, err := db.Exec(createTb)
 	if err != nil {
 		log.Fatal("can't create table ", err)

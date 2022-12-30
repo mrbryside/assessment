@@ -1,6 +1,10 @@
 package expense
 
-import "github.com/mrbryside/assessment/internal/pkg/db"
+import (
+	"github.com/lib/pq"
+	"github.com/mrbryside/assessment/internal/pkg/db"
+	"github.com/mrbryside/assessment/internal/pkg/util"
+)
 
 type expense struct {
 	store db.Store
@@ -21,6 +25,16 @@ type modelExpense struct {
 
 func newModelExpense() *modelExpense {
 	return &modelExpense{}
+}
+
+func (m *modelExpense) Arguments() []interface{} {
+	return util.Arguments(
+		&m.ID,
+		&m.Title,
+		&m.Amount,
+		&m.Note,
+		pq.Array(&m.Tags),
+	)
 }
 
 type paramDto struct {

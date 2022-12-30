@@ -15,28 +15,22 @@ const (
 	internalErrorMessage = "internal server error"
 )
 
-type jsonHandler struct{}
-
-func newJsonHandler() jsonHandler {
-	return jsonHandler{}
-}
-
-func (j jsonHandler) BadRequest(c echo.Context, message string) error {
+func BadRequest(c echo.Context, message string) error {
 	return c.JSON(http.StatusBadRequest, newResponse().ApiError(badRequestCode, message))
 }
 
-func (j jsonHandler) NotFound(c echo.Context, message string) error {
+func NotFound(c echo.Context, message string) error {
 	return c.JSON(http.StatusNotFound, newResponse().ApiError(notFoundCode, message))
 }
 
-func (j jsonHandler) InternalServerError(c echo.Context) error {
+func InternalServerError(c echo.Context) error {
 	return c.JSON(http.StatusInternalServerError, newResponse().ApiError(internalErrorCode, internalErrorMessage))
 }
 
-func (j jsonHandler) SuccessCreated(c echo.Context, response interface{}) error {
+func SuccessCreated(c echo.Context, response interface{}) error {
 	return c.JSON(http.StatusCreated, response)
 }
 
-func (j jsonHandler) Success(c echo.Context, response interface{}) error {
+func Success(c echo.Context, response interface{}) error {
 	return c.JSON(http.StatusOK, response)
 }

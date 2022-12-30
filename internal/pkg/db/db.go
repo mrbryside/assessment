@@ -4,6 +4,14 @@ import (
 	"log"
 )
 
+type Store interface {
+	InitStore() error
+	Script() script
+	Insert(string, ...interface{}) error
+	FindOne(int, string, ...interface{}) error
+	Update(string, ...interface{}) error
+}
+
 var DB Store
 
 func InitDB(db Store) {

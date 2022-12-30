@@ -12,10 +12,6 @@ func TestHelper() testHelper {
 	return newTestHelper()
 }
 
-func JsonHandler() jsonHandler {
-	return newJsonHandler()
-}
-
 func Validator(v *validator.Validate) *customValidator {
 	return newCustomValidator(v)
 }

@@ -34,6 +34,7 @@ func main() {
 	// register routes
 	e.POST("/expenses", expenses.CreateExpenseHandler)
 	e.GET("/expenses/:id", expenses.GetExpenseHandler)
+	e.PUT("/expenses/:id", expenses.UpdateExpenseHandler)
 
 	log.Printf("Server started at %v\n", port)
 	log.Fatal(e.Start(port))

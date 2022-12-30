@@ -3,6 +3,7 @@
 package expense
 
 import (
+	"bytes"
 	"context"
 	"github.com/labstack/echo/v4"
 	"github.com/mrbryside/assessment/internal/pkg/db"
@@ -15,20 +16,26 @@ import (
 )
 
 const (
-	getBody = `{
+	createBody = `{
 		"title": "strawberry smoothie",
 		"amount": 79,
 		"note": "night market promotion discount 10 bath",
-		"tags": ["food", "beverage"]
+		"tags": ["update test","beverage"]
 	}`
-	getCode = http.StatusOK
+	updatedBody = `{
+		"title": "strawberry smoothie",
+		"amount": 79,
+		"note": "night market promotion discount 10 bath",
+		"tags": ["beverage"]
+	}`
+	updateCode = http.StatusOK
 )
 
 var (
-	created, latest modelExpense
+	createdExpense, updatedExpense modelExpense
 )
 
-func TestIntegrationGetExpense(t *testing.T) {
+func TestIntegrationUpdateExpense(t *testing.T) {
 	// Setup server
 	db.InitDB(db.NewPostgres("postgresql://root:root@db/test-db?sslmode=disable"))
 	expenses := NewExpense(db.DB)
@@ -36,30 +43,30 @@ func TestIntegrationGetExpense(t *testing.T) {
 	eh := echo.New()
 	eh = th.InitItEcho(eh, func() {
 		eh.POST("/expenses", expenses.CreateExpenseHandler)
-		eh.GET("/expenses/:id", expenses.GetExpenseHandler)
+		eh.PUT("/expenses/:id", expenses.UpdateExpenseHandler)
 	})
 
 	// Arrange
-	wantCode := getCode
+	wantCode := updateCode
 	wantTitle := "strawberry smoothie"
 	wantAmount := 79
 	wantNote := "night market promotion discount 10 bath"
-	wantTags := []string{"food", "beverage"}
+	wantTags := []string{"beverage"}
 
 	// Act
-	err := th.Seeder(&created, getBody, "expenses")
+	err := th.Seeder(&createdExpense, createBody, "expenses")
 	if err != nil {
 		t.Fatal("can't create expense:", err)
 	}
-
-	res := th.Request(http.MethodGet, th.Uri("expenses", strconv.Itoa(created.ID)), nil)
-	err = res.Decode(&latest)
+	body := bytes.NewBufferString(updatedBody)
+	res := th.Request(http.MethodPut, th.Uri("expenses", strconv.Itoa(createdExpense.ID)), body)
+	err = res.Decode(&updatedExpense)
 
 	gotErr := err
-	gotTitle := latest.Title
-	gotAmount := latest.Amount
-	gotNote := latest.Note
-	gotTags := latest.Tags
+	gotTitle := updatedExpense.Title
+	gotAmount := updatedExpense.Amount
+	gotNote := updatedExpense.Note
+	gotTags := updatedExpense.Tags
 	gotCode := res.StatusCode
 
 	// Assert

@@ -2,13 +2,13 @@ package db
 
 // InitPostgresScript postgres
 
-type queryScript struct{}
+type script struct{}
 
-func Script() queryScript {
-	return queryScript{}
+func newScript() script {
+	return script{}
 }
 
-func (q queryScript) CreateExpenseTable() string {
+func (q script) CreateExpenseTable() string {
 	return `
 			CREATE TABLE IF NOT EXISTS expenses (
 				id SERIAL PRIMARY KEY,
@@ -19,10 +19,14 @@ func (q queryScript) CreateExpenseTable() string {
 			);`
 }
 
-func (q queryScript) InsertExpense() string {
+func (q script) InsertExpense() string {
 	return "INSERT INTO expenses (title, amount, note, tags) values ($1, $2, $3, $4)  RETURNING id"
 }
 
-func (q queryScript) GetExpense() string {
+func (q script) GetExpense() string {
 	return "SELECT id, title, amount, note, tags FROM expenses where id=$1"
+}
+
+func (q script) UpdateExpense() string {
+	return "UPDATE expenses SET title=$2, amount=$3, note=$4, tags=$5 WHERE id=$1"
 }

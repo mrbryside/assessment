@@ -15,6 +15,15 @@ import (
 	"testing"
 )
 
+const (
+	createPayload = `{
+		"title": "strawberry smoothie",
+		"amount": 79,
+		"note": "night market promotion discount 10 bath", 
+		"tags": ["food", "beverage"]
+	}`
+)
+
 var createTests = []struct {
 	name     string
 	code     int
@@ -24,15 +33,10 @@ var createTests = []struct {
 	called   bool
 }{
 	{
-		name: "should return expense response",
-		code: http.StatusCreated,
-		spy:  newSpyCreateSuccess(),
-		payload: `{
-			"title": "strawberry smoothie",
-    		"amount": 79,
-    		"note": "night market promotion discount 10 bath", 
-    		"tags": ["food", "beverage"]
-		}`,
+		name:    "should return expense response",
+		code:    http.StatusCreated,
+		spy:     newSpyCreateSuccess(),
+		payload: createPayload,
 		response: `{
 			"id": 5,
 			"title": "strawberry smoothie",
@@ -64,26 +68,20 @@ var createTests = []struct {
 		spy:  newSpyCreateSuccess(),
 		payload: `{
 			"title": "strawberry smoothie",
-    		"amount": "12345",
     		"note": "night market promotion discount 10 bath", 
     		"tags": ["food", "beverage"]
 		}`,
 		response: `{
 			"code": "4000",
-			"message": "Request parameters are invalid."
+			"message": "Amount is a required field"
 		}`,
 		called: false,
 	},
 	{
-		name: "should return response internal server error",
-		code: http.StatusInternalServerError,
-		spy:  newSpyCreateFail(),
-		payload: `{
-			"title": "strawberry smoothie",
-			"amount": 79,
-			"note": "night market promotion discount 10 bath",
-			"tags": ["food", "beverage"]
-		}`,
+		name:    "should return response internal server error",
+		code:    http.StatusInternalServerError,
+		spy:     newSpyCreateFail(),
+		payload: createPayload,
 		response: `{
 			"code": "5000",
 			"message": "internal server error"
@@ -130,7 +128,7 @@ func TestCreateExpense(t *testing.T) {
 
 // --- create fail spy
 func newSpyCreateFail() db.StoreSpy {
-	return db.NewStoreSpy(insertFail, nil)
+	return db.NewStoreSpy(insertFail, nil, nil)
 }
 
 func insertFail(args ...any) error {
@@ -139,7 +137,7 @@ func insertFail(args ...any) error {
 
 // --- create success spy
 func newSpyCreateSuccess() db.StoreSpy {
-	return db.NewStoreSpy(insertSuccess, nil)
+	return db.NewStoreSpy(insertSuccess, nil, nil)
 }
 
 func insertSuccess(args ...any) error {
