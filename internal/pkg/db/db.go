@@ -1,7 +1,7 @@
 package db
 
 import (
-	"log"
+	"database/sql"
 )
 
 type Store interface {
@@ -9,16 +9,19 @@ type Store interface {
 	Script() script
 	Insert(string, ...interface{}) error
 	FindOne(int, string, ...interface{}) error
+	Find(script string, model interface{}, args ...interface{}) ([]interface{}, error)
 	Update(string, ...interface{}) error
 }
 
 var DB Store
+var realDB *sql.DB
 
-func InitDB(db Store) {
+func InitDB(db Store) (*sql.DB, error) {
 	err := db.InitStore()
 
 	if err != nil {
-		log.Fatal("Connect to database error", err)
+		return nil, err
 	}
 	DB = db
+	return realDB, nil
 }

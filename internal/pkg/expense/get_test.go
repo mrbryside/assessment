@@ -127,7 +127,7 @@ func TestGetExpense(t *testing.T) {
 
 // --- get fail spy
 func newSpyGetFail() db.StoreSpy {
-	return db.NewStoreSpy(nil, findOneFail, nil)
+	return db.NewStoreSpy(nil, findOneFail, nil, nil)
 }
 
 func findOneFail(args ...any) error {
@@ -136,7 +136,7 @@ func findOneFail(args ...any) error {
 
 // --- get not found spy
 func newSpyGetNotFound() db.StoreSpy {
-	return db.NewStoreSpy(nil, findOneNotFound, nil)
+	return db.NewStoreSpy(nil, findOneNotFound, nil, nil)
 }
 
 func findOneNotFound(args ...any) error {
@@ -145,15 +145,12 @@ func findOneNotFound(args ...any) error {
 
 // --- get success spy
 func newSpyGetSuccess() db.StoreSpy {
-	return db.NewStoreSpy(nil, findOneSuccess, nil)
+	return db.NewStoreSpy(nil, findOneSuccess, nil, nil)
 }
 
 func findOneSuccess(args ...any) error {
 	var model modelExpense
-	err := json.Unmarshal([]byte(getResponse), &model)
-	if err != nil {
-		return err
-	}
+	_ = json.Unmarshal([]byte(getResponse), &model)
 	id, _ := args[0].(*int)
 	*id = model.ID
 

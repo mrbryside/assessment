@@ -20,7 +20,11 @@ func main() {
 	dbUrl := config.NewProvider().DbUrl
 
 	// init db to Store
-	db.InitDB(db.NewPostgres(dbUrl))
+	database, err := db.InitDB(db.NewPostgres(dbUrl))
+	if err != nil {
+		panic("can't connect database")
+	}
+	defer database.Close()
 
 	// init echo framework
 	e := echo.New()
@@ -33,6 +37,7 @@ func main() {
 
 	// register routes
 	e.POST("/expenses", expenses.CreateExpenseHandler)
+	e.GET("/expenses", expenses.GetExpensesHandler)
 	e.GET("/expenses/:id", expenses.GetExpenseHandler)
 	e.PUT("/expenses/:id", expenses.UpdateExpenseHandler)
 

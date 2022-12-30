@@ -178,7 +178,7 @@ func TestUpdateExpense(t *testing.T) {
 
 // --- update success spy
 func newSpyUpdateSuccess() db.StoreSpy {
-	return db.NewStoreSpy(nil, findOneCheckSuccess, updateSuccess)
+	return db.NewStoreSpy(nil, findOneCheckSuccess, nil, updateSuccess)
 }
 
 func updateSuccess(args ...any) error {
@@ -211,7 +211,7 @@ func findOneCheckSuccess(args ...any) error {
 
 // --- update check exist spy fail
 func newSpyCheckExistFail() db.StoreSpy {
-	return db.NewStoreSpy(nil, findOneCheckFail, nil)
+	return db.NewStoreSpy(nil, findOneCheckFail, nil, nil)
 }
 
 func findOneCheckFail(args ...any) error {
@@ -220,7 +220,7 @@ func findOneCheckFail(args ...any) error {
 
 // --- update check exist not found spy
 func newSpyCheckExistNotFound() db.StoreSpy {
-	return db.NewStoreSpy(nil, findOneCheckNotFound, nil)
+	return db.NewStoreSpy(nil, findOneCheckNotFound, nil, nil)
 }
 
 func findOneCheckNotFound(args ...any) error {
@@ -229,7 +229,7 @@ func findOneCheckNotFound(args ...any) error {
 
 // --- update check success and update fail spy
 func newSpyUpdateFail() db.StoreSpy {
-	return db.NewStoreSpy(nil, findOneCheckSuccess, updateFail)
+	return db.NewStoreSpy(nil, findOneCheckSuccess, nil, updateFail)
 }
 func updateFail(args ...any) error {
 	return errors.New("error")
