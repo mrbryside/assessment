@@ -21,10 +21,12 @@ func (e *expense) UpdateExpenseHandler(c echo.Context) error {
 		return util.BadRequest(c, err.Error())
 	}
 
+	// check expense exist
+	var found modelExpense
 	err = e.store.FindOne(
 		id,
 		e.store.Script().GetExpense(),
-		model.Arguments()...,
+		found.Arguments()...,
 	)
 	if err != nil && util.Error().CompareError(err, util.Error().DBNotFound) {
 		return util.NotFound(c, "expense not found")
@@ -33,9 +35,12 @@ func (e *expense) UpdateExpenseHandler(c echo.Context) error {
 		return util.InternalServerError(c)
 	}
 
+	// update operation
 	model.ID = id
-
-	_ = e.store.Update(e.store.Script().UpdateExpense(), model.Arguments()...)
+	err = e.store.Update(e.store.Script().UpdateExpense(), model.Arguments()...)
+	if err != nil {
+		return util.InternalServerError(c)
+	}
 
 	return util.Success(c, model)
 }

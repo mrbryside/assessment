@@ -108,6 +108,18 @@ var updateTests = []struct {
 		}`,
 		called: true,
 	},
+	{
+		name:    "should return internal server error from update expense",
+		code:    http.StatusInternalServerError,
+		spy:     newSpyUpdateFail(),
+		param:   "1",
+		payload: updatePayload,
+		response: `{
+			"code": "5000",
+			"message": "internal server error"
+		}`,
+		called: true,
+	},
 }
 
 func TestUpdateExpense(t *testing.T) {
@@ -184,7 +196,7 @@ func findOneCheckSuccess(args ...any) error {
 	return nil
 }
 
-// --- get fail spy
+// --- update check exist spy fail
 func newSpyCheckExistFail() db.StoreSpy {
 	return db.NewStoreSpy(nil, findOneCheckFail, nil)
 }
@@ -193,11 +205,19 @@ func findOneCheckFail(args ...any) error {
 	return errors.New("error")
 }
 
-// --- get not found spy
+// --- update check exist not found spy
 func newSpyCheckExistNotFound() db.StoreSpy {
 	return db.NewStoreSpy(nil, findOneCheckNotFound, nil)
 }
 
 func findOneCheckNotFound(args ...any) error {
 	return util.Error().DBNotFound
+}
+
+// --- update check success and update fail spy
+func newSpyUpdateFail() db.StoreSpy {
+	return db.NewStoreSpy(nil, findOneCheckSuccess, updateFail)
+}
+func updateFail(args ...any) error {
+	return errors.New("error")
 }
