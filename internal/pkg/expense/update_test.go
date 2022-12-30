@@ -53,6 +53,18 @@ var updateTests = []struct {
 		called:   true,
 	},
 	{
+		name:    "should return bad request from path param",
+		code:    http.StatusBadRequest,
+		spy:     newSpyUpdateSuccess(),
+		param:   "error",
+		payload: updatePayload,
+		response: `{
+			"code": "4000",
+			"message": "Request path parameter is invalid."
+		}`,
+		called: false,
+	},
+	{
 		name:  "should return bad request response",
 		code:  http.StatusBadRequest,
 		spy:   newSpyUpdateSuccess(),
@@ -89,6 +101,7 @@ var updateTests = []struct {
 		name:    "should return response expense not found",
 		code:    http.StatusNotFound,
 		spy:     newSpyCheckExistNotFound(),
+		param:   "1",
 		payload: updatePayload,
 		response: `{
 			"code": "4004",

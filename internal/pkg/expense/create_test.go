@@ -15,6 +15,15 @@ import (
 	"testing"
 )
 
+const (
+	createPayload = `{
+		"title": "strawberry smoothie",
+		"amount": 79,
+		"note": "night market promotion discount 10 bath", 
+		"tags": ["food", "beverage"]
+	}`
+)
+
 var createTests = []struct {
 	name     string
 	code     int
@@ -24,15 +33,10 @@ var createTests = []struct {
 	called   bool
 }{
 	{
-		name: "should return expense response",
-		code: http.StatusCreated,
-		spy:  newSpyCreateSuccess(),
-		payload: `{
-			"title": "strawberry smoothie",
-    		"amount": 79,
-    		"note": "night market promotion discount 10 bath", 
-    		"tags": ["food", "beverage"]
-		}`,
+		name:    "should return expense response",
+		code:    http.StatusCreated,
+		spy:     newSpyCreateSuccess(),
+		payload: createPayload,
 		response: `{
 			"id": 5,
 			"title": "strawberry smoothie",
@@ -74,15 +78,10 @@ var createTests = []struct {
 		called: false,
 	},
 	{
-		name: "should return response internal server error",
-		code: http.StatusInternalServerError,
-		spy:  newSpyCreateFail(),
-		payload: `{
-			"title": "strawberry smoothie",
-			"amount": 79,
-			"note": "night market promotion discount 10 bath",
-			"tags": ["food", "beverage"]
-		}`,
+		name:    "should return response internal server error",
+		code:    http.StatusInternalServerError,
+		spy:     newSpyCreateFail(),
+		payload: createPayload,
 		response: `{
 			"code": "5000",
 			"message": "internal server error"

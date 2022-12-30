@@ -8,10 +8,13 @@ import (
 
 func (e *expense) UpdateExpenseHandler(c echo.Context) error {
 	idParam := c.Param("id")
-	id, _ := strconv.Atoi(idParam)
+	id, err := strconv.Atoi(idParam)
+	if err != nil {
+		return util.BadRequest(c, "Request path parameter is invalid.")
+	}
 	model := newModelExpense()
 
-	err := c.Bind(&model)
+	err = c.Bind(&model)
 	if err != nil {
 		return util.BadRequest(c, "Request parameters are invalid.")
 	}
