@@ -11,7 +11,15 @@ func (e *expense) UpdateExpenseHandler(c echo.Context) error {
 	id, _ := strconv.Atoi(idParam)
 	model := newModelExpense()
 
-	_ = c.Bind(&model)
+	err := c.Bind(&model)
+	if err != nil {
+		return util.JsonHandler().BadRequest(c, "Request parameters are invalid.")
+	}
+
+	err = c.Validate(model)
+	if err != nil {
+		return util.JsonHandler().BadRequest(c, err.Error())
+	}
 
 	model.ID = id
 

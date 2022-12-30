@@ -44,6 +44,39 @@ var updateTests = []struct {
 		}`,
 		called: true,
 	},
+	{
+		name:  "should return bad request response",
+		code:  http.StatusBadRequest,
+		spy:   newSpyUpdateSuccess(),
+		param: "1",
+		payload: `{
+			"title": "strawberry smoothie",
+			"amount": "1234",
+			"note": "night market promotion discount 10 bath", 
+			"tags": ["food", "beverage"]
+		}`,
+		response: `{
+			"code": "4000",
+			"message": "Request parameters are invalid."
+		}`,
+		called: false,
+	},
+	{
+		name:  "should return bad request validation",
+		code:  http.StatusBadRequest,
+		spy:   newSpyUpdateSuccess(),
+		param: "1",
+		payload: `{
+			"title": "strawberry smoothie",
+			"note": "night market promotion discount 10 bath", 
+			"tags": ["food", "beverage"]
+		}`,
+		response: `{
+			"code": "4000",
+			"message": "Amount is a required field"
+		}`,
+		called: false,
+	},
 }
 
 func TestUpdateExpense(t *testing.T) {
