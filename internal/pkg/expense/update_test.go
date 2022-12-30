@@ -3,9 +3,12 @@
 package expense
 
 import (
+	"encoding/json"
+	"errors"
 	"fmt"
 	"github.com/go-playground/validator"
 	"github.com/labstack/echo/v4"
+	"github.com/lib/pq"
 	"github.com/mrbryside/assessment/internal/pkg/db"
 	"github.com/mrbryside/assessment/internal/pkg/util"
 	"github.com/stretchr/testify/assert"
@@ -13,6 +16,22 @@ import (
 	"net/http/httptest"
 	"strings"
 	"testing"
+)
+
+const (
+	updateResponse = `{
+		"id": 1,
+		"title": "strawberry smoothie",
+		"amount": 79,
+		"note": "night market promotion discount 10 bath",
+		"tags": ["food", "beverage"]
+	}`
+	updatePayload = `{
+		"title": "strawberry smoothie",
+		"amount": 79,
+		"note": "night market promotion discount 10 bath", 
+		"tags": ["food", "beverage"]
+	}`
 )
 
 var updateTests = []struct {
@@ -25,24 +44,13 @@ var updateTests = []struct {
 	called   bool
 }{
 	{
-		name:  "should return response updated expense json",
-		code:  http.StatusOK,
-		spy:   newSpyUpdateSuccess(),
-		param: "1",
-		payload: `{
-			"title": "strawberry smoothie",
-			"amount": 79,
-			"note": "night market promotion discount 10 bath", 
-			"tags": ["food", "beverage"]
-		}`,
-		response: `{
-			"id": 1,
-			"title": "strawberry smoothie",
-			"amount": 79,
-			"note": "night market promotion discount 10 bath", 
-			"tags": ["food", "beverage"]
-		}`,
-		called: true,
+		name:     "should return response updated expense json",
+		code:     http.StatusOK,
+		spy:      newSpyUpdateSuccess(),
+		param:    "1",
+		payload:  updatePayload,
+		response: updateResponse,
+		called:   true,
 	},
 	{
 		name:  "should return bad request response",
@@ -76,6 +84,29 @@ var updateTests = []struct {
 			"message": "Amount is a required field"
 		}`,
 		called: false,
+	},
+	{
+		name:    "should return response expense not found",
+		code:    http.StatusNotFound,
+		spy:     newSpyCheckExistNotFound(),
+		payload: updatePayload,
+		response: `{
+			"code": "4004",
+			"message": "expense not found"
+		}`,
+		called: true,
+	},
+	{
+		name:    "should return internal server error from check expense",
+		code:    http.StatusInternalServerError,
+		spy:     newSpyCheckExistFail(),
+		param:   "1",
+		payload: updatePayload,
+		response: `{
+			"code": "5000",
+			"message": "internal server error"
+		}`,
+		called: true,
 	},
 }
 
@@ -122,9 +153,51 @@ func TestUpdateExpense(t *testing.T) {
 
 // --- update success spy
 func newSpyUpdateSuccess() db.StoreSpy {
-	return db.NewStoreSpy(nil, nil, updateSuccess)
+	return db.NewStoreSpy(nil, findOneCheckSuccess, updateSuccess)
 }
 
 func updateSuccess(args ...any) error {
 	return nil
+}
+
+func findOneCheckSuccess(args ...any) error {
+	var model modelExpense
+	err := json.Unmarshal([]byte(updateResponse), &model)
+	if err != nil {
+		return err
+	}
+	id, _ := args[0].(*int)
+	*id = model.ID
+
+	title, _ := args[1].(*string)
+	*title = model.Title
+
+	amount, _ := args[2].(*int)
+	*amount = model.Amount
+
+	note, _ := args[3].(*string)
+	*note = model.Note
+
+	tags, _ := args[4].(*pq.StringArray)
+	*tags = model.Tags
+
+	return nil
+}
+
+// --- get fail spy
+func newSpyCheckExistFail() db.StoreSpy {
+	return db.NewStoreSpy(nil, findOneCheckFail, nil)
+}
+
+func findOneCheckFail(args ...any) error {
+	return errors.New("error")
+}
+
+// --- get not found spy
+func newSpyCheckExistNotFound() db.StoreSpy {
+	return db.NewStoreSpy(nil, findOneCheckNotFound, nil)
+}
+
+func findOneCheckNotFound(args ...any) error {
+	return util.Error().DBNotFound
 }

@@ -10,12 +10,12 @@ func (e *expense) CreateExpenseHandler(c echo.Context) error {
 
 	err := c.Bind(model)
 	if err != nil {
-		return util.JsonHandler().BadRequest(c, "Request parameters are invalid.")
+		return util.BadRequest(c, "Request parameters are invalid.")
 	}
 
 	err = c.Validate(model)
 	if err != nil {
-		return util.JsonHandler().BadRequest(c, err.Error())
+		return util.BadRequest(c, err.Error())
 	}
 
 	err = e.store.Insert(
@@ -24,8 +24,8 @@ func (e *expense) CreateExpenseHandler(c echo.Context) error {
 	)
 
 	if err != nil {
-		return util.JsonHandler().InternalServerError(c)
+		return util.InternalServerError(c)
 	}
 
-	return util.JsonHandler().SuccessCreated(c, model)
+	return util.SuccessCreated(c, model)
 }

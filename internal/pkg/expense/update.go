@@ -13,17 +13,29 @@ func (e *expense) UpdateExpenseHandler(c echo.Context) error {
 
 	err := c.Bind(&model)
 	if err != nil {
-		return util.JsonHandler().BadRequest(c, "Request parameters are invalid.")
+		return util.BadRequest(c, "Request parameters are invalid.")
 	}
 
 	err = c.Validate(model)
 	if err != nil {
-		return util.JsonHandler().BadRequest(c, err.Error())
+		return util.BadRequest(c, err.Error())
+	}
+
+	err = e.store.FindOne(
+		id,
+		e.store.Script().GetExpense(),
+		model.Arguments()...,
+	)
+	if err != nil && util.Error().CompareError(err, util.Error().DBNotFound) {
+		return util.NotFound(c, "expense not found")
+	}
+	if err != nil {
+		return util.InternalServerError(c)
 	}
 
 	model.ID = id
 
 	_ = e.store.Update(e.store.Script().UpdateExpense(), model.Arguments()...)
 
-	return util.JsonHandler().Success(c, model)
+	return util.Success(c, model)
 }
