@@ -7,6 +7,7 @@ import (
 	"context"
 	"github.com/labstack/echo/v4"
 	"github.com/mrbryside/assessment/internal/pkg/db"
+	"github.com/mrbryside/assessment/internal/pkg/middleware"
 	"github.com/mrbryside/assessment/internal/pkg/util/httputil"
 	"github.com/stretchr/testify/assert"
 	"net/http"
@@ -33,6 +34,7 @@ func TestIntegrationCreateExpense(t *testing.T) {
 	defer database.Close()
 	expenses := NewExpense(db.DB)
 	eh := echo.New()
+	eh.Use(middleware.VerifyAuthorization)
 	eh = httputil.InitItEcho(eh, func() {
 		eh.POST("/expenses", expenses.CreateExpenseHandler)
 	})

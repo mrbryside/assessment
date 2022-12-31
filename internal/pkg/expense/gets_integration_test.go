@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"github.com/labstack/echo/v4"
 	"github.com/mrbryside/assessment/internal/pkg/db"
+	"github.com/mrbryside/assessment/internal/pkg/middleware"
 	"github.com/mrbryside/assessment/internal/pkg/util/httputil"
 	"github.com/stretchr/testify/assert"
 	"net/http"
@@ -47,6 +48,7 @@ func TestIntegrationGetExpenses(t *testing.T) {
 	expenses := NewExpense(db.DB)
 	_, err = database.Exec("TRUNCATE expenses;")
 	eh := echo.New()
+	eh.Use(middleware.VerifyAuthorization)
 	eh = httputil.InitItEcho(eh, func() {
 		eh.POST("/expenses", expenses.CreateExpenseHandler)
 		eh.GET("/expenses", expenses.GetExpensesHandler)
