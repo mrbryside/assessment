@@ -1,10 +1,11 @@
-package util
+package httputil
 
 import (
 	"bytes"
 	"fmt"
 	"github.com/go-playground/validator"
 	"github.com/labstack/echo/v4"
+	"github.com/mrbryside/assessment/internal/pkg/util/common"
 	"io"
 	"log"
 	"net"
@@ -18,13 +19,7 @@ const (
 	serverPort = ":2565"
 )
 
-type testHelper struct{}
-
-func newTestHelper() testHelper {
-	return testHelper{}
-}
-
-func (t testHelper) Uri(paths ...string) string {
+func Uri(paths ...string) string {
 	host := fmt.Sprintf("http://localhost%v", serverPort)
 	if paths == nil {
 		return host
@@ -34,7 +29,7 @@ func (t testHelper) Uri(paths ...string) string {
 	return strings.Join(url, "/")
 }
 
-func (t testHelper) Request(method, url string, body io.Reader) *httpResponse {
+func Request(method, url string, body io.Reader) *httpResponse {
 	req, _ := http.NewRequest(method, url, body)
 	req.Header.Add("Authorization", os.Getenv("AUTH_TOKEN"))
 	req.Header.Add("Content-Type", "application/json")
@@ -43,9 +38,9 @@ func (t testHelper) Request(method, url string, body io.Reader) *httpResponse {
 	return &httpResponse{res, err}
 }
 
-func (t testHelper) InitItEcho(eh *echo.Echo, setRoute func()) *echo.Echo {
+func InitItEcho(eh *echo.Echo, setRoute func()) *echo.Echo {
 	go func(e *echo.Echo) {
-		e.Validator = Validator(validator.New())
+		e.Validator = common.Validator(validator.New())
 		setRoute()
 		eh.Start(serverPort)
 	}(eh)
@@ -61,9 +56,9 @@ func (t testHelper) InitItEcho(eh *echo.Echo, setRoute func()) *echo.Echo {
 	}
 	return eh
 }
-func (t testHelper) Seeder(model interface{}, payload string, args ...string) error {
+func Seeder(model interface{}, payload string, args ...string) error {
 	body := bytes.NewBufferString(payload)
-	err := t.Request(http.MethodPost, t.Uri(args...), body).Decode(&model)
+	err := Request(http.MethodPost, Uri(args...), body).Decode(&model)
 	if err != nil {
 		return err
 	}

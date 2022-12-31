@@ -2,7 +2,8 @@ package db
 
 import (
 	"database/sql"
-	"github.com/mrbryside/assessment/internal/pkg/util"
+	"github.com/mrbryside/assessment/internal/pkg/util/common"
+	"github.com/mrbryside/assessment/internal/pkg/util/errs"
 )
 
 func (p *postgres) InitStore() error {
@@ -49,7 +50,7 @@ func (p *postgres) FindOne(rowId int, script string, args ...interface{}) error 
 	err = row.Scan(args...)
 
 	if err != nil && err == sql.ErrNoRows {
-		return util.Error().DBNotFound
+		return errs.Error().DBNotFound
 	}
 	if err != nil {
 		return err
@@ -75,7 +76,7 @@ func (p *postgres) Find(script string, model interface{}, args ...interface{}) (
 		if err != nil {
 			return nil, err
 		}
-		results = append(results, util.Value(model))
+		results = append(results, common.Value(model))
 	}
 	return results, nil
 

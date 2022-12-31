@@ -6,7 +6,7 @@ import (
 	"context"
 	"github.com/labstack/echo/v4"
 	"github.com/mrbryside/assessment/internal/pkg/db"
-	"github.com/mrbryside/assessment/internal/pkg/util"
+	"github.com/mrbryside/assessment/internal/pkg/util/httputil"
 	"github.com/stretchr/testify/assert"
 	"net/http"
 	"strconv"
@@ -36,9 +36,8 @@ func TestIntegrationGetExpense(t *testing.T) {
 	}
 	defer database.Close()
 	expenses := NewExpense(db.DB)
-	th := util.TestHelper()
 	eh := echo.New()
-	eh = th.InitItEcho(eh, func() {
+	eh = httputil.InitItEcho(eh, func() {
 		eh.POST("/expenses", expenses.CreateExpenseHandler)
 		eh.GET("/expenses/:id", expenses.GetExpenseHandler)
 	})
@@ -51,12 +50,12 @@ func TestIntegrationGetExpense(t *testing.T) {
 	wantTags := []string{"food", "beverage"}
 
 	// Act
-	err = th.Seeder(&created, getBody, "expenses")
+	err = httputil.Seeder(&created, getBody, "expenses")
 	if err != nil {
 		t.Fatal("can't create expense:", err)
 	}
 
-	res := th.Request(http.MethodGet, th.Uri("expenses", strconv.Itoa(created.ID)), nil)
+	res := httputil.Request(http.MethodGet, httputil.Uri("expenses", strconv.Itoa(created.ID)), nil)
 	err = res.Decode(&latest)
 
 	gotErr := err

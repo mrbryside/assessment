@@ -7,7 +7,7 @@ import (
 	"github.com/mrbryside/assessment/internal/config"
 	"github.com/mrbryside/assessment/internal/pkg/db"
 	"github.com/mrbryside/assessment/internal/pkg/expense"
-	"github.com/mrbryside/assessment/internal/pkg/util"
+	"github.com/mrbryside/assessment/internal/pkg/util/common"
 	"log"
 )
 
@@ -30,7 +30,7 @@ func main() {
 	e := echo.New()
 	e.Use(middleware.Logger())
 	e.Use(middleware.Recover())
-	e.Validator = util.Validator(validator.New())
+	e.Validator = common.Validator(validator.New())
 
 	// init handler
 	expenses := expense.NewExpense(db.DB)

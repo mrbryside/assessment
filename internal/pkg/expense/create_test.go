@@ -7,7 +7,7 @@ import (
 	"github.com/go-playground/validator"
 	"github.com/labstack/echo/v4"
 	"github.com/mrbryside/assessment/internal/pkg/db"
-	"github.com/mrbryside/assessment/internal/pkg/util"
+	"github.com/mrbryside/assessment/internal/pkg/util/common"
 	"github.com/stretchr/testify/assert"
 	"net/http"
 	"net/http/httptest"
@@ -98,7 +98,7 @@ func TestCreateExpense(t *testing.T) {
 			// Arrange
 			expenses := NewExpense(ctc.spy)
 			e := echo.New()
-			e.Validator = util.Validator(validator.New())
+			e.Validator = common.Validator(validator.New())
 			req := httptest.NewRequest(http.MethodPost, "/", strings.NewReader(ctc.payload))
 			req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
 			rec := httptest.NewRecorder()

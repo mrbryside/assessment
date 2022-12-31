@@ -10,7 +10,8 @@ import (
 	"github.com/labstack/echo/v4"
 	"github.com/lib/pq"
 	"github.com/mrbryside/assessment/internal/pkg/db"
-	"github.com/mrbryside/assessment/internal/pkg/util"
+	"github.com/mrbryside/assessment/internal/pkg/util/common"
+	"github.com/mrbryside/assessment/internal/pkg/util/errs"
 	"github.com/stretchr/testify/assert"
 	"net/http"
 	"net/http/httptest"
@@ -143,7 +144,7 @@ func TestUpdateExpense(t *testing.T) {
 			// Arrange
 			expenses := NewExpense(utc.spy)
 			e := echo.New()
-			e.Validator = util.Validator(validator.New())
+			e.Validator = common.Validator(validator.New())
 			req := httptest.NewRequest(
 				http.MethodPut,
 				fmt.Sprintf("/expenses/%s", utc.param),
@@ -224,7 +225,7 @@ func newSpyCheckExistNotFound() db.StoreSpy {
 }
 
 func findOneCheckNotFound(args ...any) error {
-	return util.Error().DBNotFound
+	return errs.Error().DBNotFound
 }
 
 // --- update check success and update fail spy

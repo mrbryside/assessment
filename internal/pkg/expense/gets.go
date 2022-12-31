@@ -2,7 +2,7 @@ package expense
 
 import (
 	"github.com/labstack/echo/v4"
-	"github.com/mrbryside/assessment/internal/pkg/util"
+	"github.com/mrbryside/assessment/internal/pkg/util/httputil"
 )
 
 func (e *expense) GetExpensesHandler(c echo.Context) error {
@@ -10,7 +10,7 @@ func (e *expense) GetExpensesHandler(c echo.Context) error {
 
 	results, err := e.store.Find(e.store.Script().GetExpenses(), model, model.Arguments()...)
 	if err != nil {
-		return util.InternalServerError(c)
+		return httputil.InternalServerError(c)
 	}
-	return util.Success(c, results)
+	return httputil.Success(c, results)
 }

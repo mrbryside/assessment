@@ -2,7 +2,9 @@ package expense
 
 import (
 	"github.com/labstack/echo/v4"
-	"github.com/mrbryside/assessment/internal/pkg/util"
+	"github.com/labstack/gommon/log"
+	"github.com/mrbryside/assessment/internal/pkg/util/errs"
+	"github.com/mrbryside/assessment/internal/pkg/util/httputil"
 )
 
 func (e *expense) GetExpenseHandler(c echo.Context) error {
@@ -11,25 +13,30 @@ func (e *expense) GetExpenseHandler(c echo.Context) error {
 
 	err := c.Bind(param)
 	if err != nil {
-		return util.BadRequest(c, "Request parameter is invalid.")
+		log.Errorf("Getting expense error with invalid path parameter")
+		return httputil.BadRequest(c, "Request parameter is invalid.")
 	}
 
 	err = c.Validate(param)
 	if err != nil {
-		return util.BadRequest(c, err.Error())
+		log.Errorf("Getting expense error with missing path parameter")
+		return httputil.BadRequest(c, err.Error())
 	}
 
+	log.Info("Getting expense with ID: ", param.ID)
 	err = e.store.FindOne(
 		param.ID,
 		e.store.Script().GetExpense(),
 		model.Arguments()...,
 	)
-	if err != nil && util.Error().CompareError(err, util.Error().DBNotFound) {
-		return util.NotFound(c, "expense not found")
+	if err != nil && errs.CompareError(err, errs.Error().DBNotFound) {
+		log.Errorf("Getting expense not found, ", err.Error())
+		return httputil.NotFound(c, "expense not found")
 	}
 	if err != nil {
-		return util.InternalServerError(c)
+		log.Errorf("Getting expense internal error, ", err.Error())
+		return httputil.InternalServerError(c)
 	}
-
-	return util.Success(c, model)
+	log.Info("Get expense success!!")
+	return httputil.Success(c, model)
 }
