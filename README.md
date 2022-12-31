@@ -11,8 +11,10 @@ This is the post-test project call assessment from go software engineer course.
 ## Run with configuration file
     touch ./internal/config/application.yaml
     
-    echo 'port: 2565" >> application.yaml && echo "database:" >> application.yaml' && \
-    echo '  url: postgres://hgopfnjn:iaPYJl23WqduL57tfmotm0MmtyCAMfsm@tiny.db.elephantsql.com/hgopfnjn?sslmode=disable >> application.yaml'
+    echo 'port: 2565' >> application.yaml && echo 'database:' >> application.yaml && \
+    echo '  url: postgres://hgopfnjn:iaPYJl23WqduL57tfmotm0MmtyCAMfsm@tiny.db.elephantsql.com/hgopfnjn?sslmode=disable' >> application.yaml
+
+    mv application.yaml ./internal/config/application.yaml
 
     make start
 
