@@ -6,7 +6,7 @@ This is the post-test project call assessment from go software engineer course.
     go mod download
 
 ## Run with environment variable 
-    DATABASE_URL=postgres://hgopfnjn:iaPYJl23WqduL57tfmotm0MmtyCAMfsm@tiny.db.elephantsql.com/hgopfnjn PORT=2565 go run ./cmd/server/server.go
+    DATABASE_URL=postgres://hgopfnjn:iaPYJl23WqduL57tfmotm0MmtyCAMfsm@tiny.db.elephantsql.com/hgopfnjn?sslmode=disable PORT=2565 go run ./cmd/server/server.go
 
 ## Run with configuration file
     touch ./internal/config/application.yaml
@@ -15,7 +15,7 @@ This is the post-test project call assessment from go software engineer course.
     port: 2565
     database:
     driver: "postgres"
-    url: "db-url"
+    url: "postgres://hgopfnjn:iaPYJl23WqduL57tfmotm0MmtyCAMfsm@tiny.db.elephantsql.com/hgopfnjn?sslmode=disable"
     timeout: 10
     -----
 
