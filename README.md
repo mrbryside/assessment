@@ -11,13 +11,8 @@ This is the post-test project call assessment from go software engineer course.
 ## Run with configuration file
     touch ./internal/config/application.yaml
     
-    ---- copy this config to application.yaml ----
-    port: 2565
-    database:
-    driver: "postgres"
-    url: "postgres://hgopfnjn:iaPYJl23WqduL57tfmotm0MmtyCAMfsm@tiny.db.elephantsql.com/hgopfnjn?sslmode=disable"
-    timeout: 10
-    -----
+    echo 'port: 2565" >> application.yaml && echo "database:" >> application.yaml' && \
+    echo '  url: postgres://hgopfnjn:iaPYJl23WqduL57tfmotm0MmtyCAMfsm@tiny.db.elephantsql.com/hgopfnjn?sslmode=disable >> application.yaml'
 
     make start
 
