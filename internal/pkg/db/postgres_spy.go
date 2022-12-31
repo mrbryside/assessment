@@ -9,46 +9,54 @@ type storeSpy struct {
 	wasCalled bool
 	insert    func(...interface{}) error
 	findOne   func(...interface{}) error
+	find      func(...interface{}) ([]interface{}, error)
 	update    func(...interface{}) error
 }
 
 func NewStoreSpy(
 	insert func(...interface{}) error,
 	findOne func(...interface{}) error,
+	find func(...interface{}) ([]interface{}, error),
 	update func(...interface{}) error,
 ) *storeSpy {
 	return &storeSpy{
 		insert:  insert,
 		findOne: findOne,
+		find:    find,
 		update:  update,
 	}
 }
 
-func (f *storeSpy) InitStore() error {
+func (s *storeSpy) InitStore() error {
 	return nil
 }
 
-func (f *storeSpy) Script() script {
+func (s *storeSpy) Script() script {
 	return newScript()
 }
 
-func (f *storeSpy) Insert(script string, args ...interface{}) error {
+func (s *storeSpy) Insert(script string, args ...interface{}) error {
 	// initial id from first model arguments
 	modelId := args[0]
-	f.wasCalled = true
-	return f.insert(modelId)
+	s.wasCalled = true
+	return s.insert(modelId)
 }
 
-func (f *storeSpy) FindOne(rowId int, queryLang string, args ...interface{}) error {
-	f.wasCalled = true
-	return f.findOne(args...)
+func (s *storeSpy) Find(script string, model interface{}, args ...interface{}) ([]interface{}, error) {
+	s.wasCalled = true
+	return s.find(args...)
 }
 
-func (f *storeSpy) Update(script string, args ...interface{}) error {
-	f.wasCalled = true
-	return f.update(args...)
+func (s *storeSpy) FindOne(rowId int, script string, args ...interface{}) error {
+	s.wasCalled = true
+	return s.findOne(args...)
 }
 
-func (f *storeSpy) IsWasCalled() bool {
-	return f.wasCalled
+func (s *storeSpy) Update(script string, args ...interface{}) error {
+	s.wasCalled = true
+	return s.update(args...)
+}
+
+func (s *storeSpy) IsWasCalled() bool {
+	return s.wasCalled
 }

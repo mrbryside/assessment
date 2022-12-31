@@ -7,7 +7,8 @@ import (
 	"context"
 	"github.com/labstack/echo/v4"
 	"github.com/mrbryside/assessment/internal/pkg/db"
-	"github.com/mrbryside/assessment/internal/pkg/util"
+	"github.com/mrbryside/assessment/internal/pkg/middleware"
+	"github.com/mrbryside/assessment/internal/pkg/util/httputil"
 	"github.com/stretchr/testify/assert"
 	"net/http"
 	"testing"
@@ -26,11 +27,15 @@ const (
 
 func TestIntegrationCreateExpense(t *testing.T) {
 	// Setup server
-	db.InitDB(db.NewPostgres("postgresql://root:root@db/test-db?sslmode=disable"))
+	database, err := db.InitDB(db.NewPostgres("postgresql://root:root@db/test-db?sslmode=disable"))
+	if err != nil {
+		t.Fatal("can't init db")
+	}
+	defer database.Close()
 	expenses := NewExpense(db.DB)
-	th := util.TestHelper()
 	eh := echo.New()
-	eh = util.TestHelper().InitItEcho(eh, func() {
+	eh.Use(middleware.VerifyAuthorization)
+	eh = httputil.InitItEcho(eh, func() {
 		eh.POST("/expenses", expenses.CreateExpenseHandler)
 	})
 
@@ -45,8 +50,8 @@ func TestIntegrationCreateExpense(t *testing.T) {
 	// Act
 	var e modelExpense
 	body := bytes.NewBufferString(payload)
-	res := th.Request(http.MethodPost, th.Uri("expenses"), body)
-	err := res.Decode(&e)
+	res := httputil.Request(http.MethodPost, httputil.Uri("expenses"), body)
+	err = res.Decode(&e)
 
 	gotErr := err
 	gotTitle := e.Title

@@ -10,7 +10,8 @@ import (
 	"github.com/labstack/echo/v4"
 	"github.com/lib/pq"
 	"github.com/mrbryside/assessment/internal/pkg/db"
-	"github.com/mrbryside/assessment/internal/pkg/util"
+	"github.com/mrbryside/assessment/internal/pkg/util/common"
+	"github.com/mrbryside/assessment/internal/pkg/util/errs"
 	"github.com/stretchr/testify/assert"
 	"net/http"
 	"net/http/httptest"
@@ -136,14 +137,14 @@ var updateTests = []struct {
 }
 
 func TestUpdateExpense(t *testing.T) {
-	t.Parallel()
+	setup(t)
 	for _, utc := range updateTests {
 		utc := utc
 		t.Run(utc.name, func(t *testing.T) {
 			// Arrange
 			expenses := NewExpense(utc.spy)
 			e := echo.New()
-			e.Validator = util.Validator(validator.New())
+			e.Validator = common.Validator(validator.New())
 			req := httptest.NewRequest(
 				http.MethodPut,
 				fmt.Sprintf("/expenses/%s", utc.param),
@@ -178,7 +179,7 @@ func TestUpdateExpense(t *testing.T) {
 
 // --- update success spy
 func newSpyUpdateSuccess() db.StoreSpy {
-	return db.NewStoreSpy(nil, findOneCheckSuccess, updateSuccess)
+	return db.NewStoreSpy(nil, findOneCheckSuccess, nil, updateSuccess)
 }
 
 func updateSuccess(args ...any) error {
@@ -211,7 +212,7 @@ func findOneCheckSuccess(args ...any) error {
 
 // --- update check exist spy fail
 func newSpyCheckExistFail() db.StoreSpy {
-	return db.NewStoreSpy(nil, findOneCheckFail, nil)
+	return db.NewStoreSpy(nil, findOneCheckFail, nil, nil)
 }
 
 func findOneCheckFail(args ...any) error {
@@ -220,16 +221,16 @@ func findOneCheckFail(args ...any) error {
 
 // --- update check exist not found spy
 func newSpyCheckExistNotFound() db.StoreSpy {
-	return db.NewStoreSpy(nil, findOneCheckNotFound, nil)
+	return db.NewStoreSpy(nil, findOneCheckNotFound, nil, nil)
 }
 
 func findOneCheckNotFound(args ...any) error {
-	return util.Error().DBNotFound
+	return errs.Error().DBNotFound
 }
 
 // --- update check success and update fail spy
 func newSpyUpdateFail() db.StoreSpy {
-	return db.NewStoreSpy(nil, findOneCheckSuccess, updateFail)
+	return db.NewStoreSpy(nil, findOneCheckSuccess, nil, updateFail)
 }
 func updateFail(args ...any) error {
 	return errors.New("error")

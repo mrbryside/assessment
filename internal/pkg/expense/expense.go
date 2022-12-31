@@ -3,7 +3,7 @@ package expense
 import (
 	"github.com/lib/pq"
 	"github.com/mrbryside/assessment/internal/pkg/db"
-	"github.com/mrbryside/assessment/internal/pkg/util"
+	"github.com/mrbryside/assessment/internal/pkg/util/common"
 )
 
 type expense struct {
@@ -28,7 +28,7 @@ func newModelExpense() *modelExpense {
 }
 
 func (m *modelExpense) Arguments() []interface{} {
-	return util.Arguments(
+	return common.Arguments(
 		&m.ID,
 		&m.Title,
 		&m.Amount,

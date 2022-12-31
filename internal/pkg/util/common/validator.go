@@ -1,4 +1,4 @@
-package util
+package common
 
 import (
 	"errors"
@@ -12,6 +12,10 @@ type customValidator struct {
 
 func newCustomValidator(v *validator.Validate) *customValidator {
 	return &customValidator{validator: v}
+}
+
+func Validator(v *validator.Validate) *customValidator {
+	return newCustomValidator(v)
 }
 
 func (c customValidator) Validate(i interface{}) error {

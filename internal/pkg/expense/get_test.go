@@ -10,7 +10,8 @@ import (
 	"github.com/labstack/echo/v4"
 	"github.com/lib/pq"
 	"github.com/mrbryside/assessment/internal/pkg/db"
-	"github.com/mrbryside/assessment/internal/pkg/util"
+	"github.com/mrbryside/assessment/internal/pkg/util/common"
+	"github.com/mrbryside/assessment/internal/pkg/util/errs"
 	"github.com/stretchr/testify/assert"
 	"net/http"
 	"net/http/httptest"
@@ -90,13 +91,13 @@ var getTests = []struct {
 }
 
 func TestGetExpense(t *testing.T) {
-	t.Parallel()
+	setup(t)
 	for _, gtc := range getTests {
 		t.Run(gtc.name, func(t *testing.T) {
 			// Arrange
 			expenses := NewExpense(gtc.spy)
 			e := echo.New()
-			e.Validator = util.Validator(validator.New())
+			e.Validator = common.Validator(validator.New())
 			req := httptest.NewRequest(http.MethodGet, fmt.Sprintf("/expenses/%s", gtc.payload), nil)
 			req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
 			rec := httptest.NewRecorder()
@@ -127,7 +128,7 @@ func TestGetExpense(t *testing.T) {
 
 // --- get fail spy
 func newSpyGetFail() db.StoreSpy {
-	return db.NewStoreSpy(nil, findOneFail, nil)
+	return db.NewStoreSpy(nil, findOneFail, nil, nil)
 }
 
 func findOneFail(args ...any) error {
@@ -136,24 +137,21 @@ func findOneFail(args ...any) error {
 
 // --- get not found spy
 func newSpyGetNotFound() db.StoreSpy {
-	return db.NewStoreSpy(nil, findOneNotFound, nil)
+	return db.NewStoreSpy(nil, findOneNotFound, nil, nil)
 }
 
 func findOneNotFound(args ...any) error {
-	return util.Error().DBNotFound
+	return errs.Error().DBNotFound
 }
 
 // --- get success spy
 func newSpyGetSuccess() db.StoreSpy {
-	return db.NewStoreSpy(nil, findOneSuccess, nil)
+	return db.NewStoreSpy(nil, findOneSuccess, nil, nil)
 }
 
 func findOneSuccess(args ...any) error {
 	var model modelExpense
-	err := json.Unmarshal([]byte(getResponse), &model)
-	if err != nil {
-		return err
-	}
+	_ = json.Unmarshal([]byte(getResponse), &model)
 	id, _ := args[0].(*int)
 	*id = model.ID
 

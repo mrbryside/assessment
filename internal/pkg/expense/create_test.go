@@ -6,9 +6,11 @@ import (
 	"errors"
 	"github.com/go-playground/validator"
 	"github.com/labstack/echo/v4"
+	"github.com/labstack/gommon/log"
 	"github.com/mrbryside/assessment/internal/pkg/db"
-	"github.com/mrbryside/assessment/internal/pkg/util"
+	"github.com/mrbryside/assessment/internal/pkg/util/common"
 	"github.com/stretchr/testify/assert"
+	"io"
 	"net/http"
 	"net/http/httptest"
 	"strings"
@@ -90,15 +92,20 @@ var createTests = []struct {
 	},
 }
 
-func TestCreateExpense(t *testing.T) {
+func setup(t *testing.T) {
 	t.Parallel()
+	log.SetOutput(io.Discard)
+}
+
+func TestCreateExpense(t *testing.T) {
+	setup(t)
 	for _, ctc := range createTests {
 		ctc := ctc
 		t.Run(ctc.name, func(t *testing.T) {
 			// Arrange
 			expenses := NewExpense(ctc.spy)
 			e := echo.New()
-			e.Validator = util.Validator(validator.New())
+			e.Validator = common.Validator(validator.New())
 			req := httptest.NewRequest(http.MethodPost, "/", strings.NewReader(ctc.payload))
 			req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
 			rec := httptest.NewRecorder()
@@ -128,7 +135,7 @@ func TestCreateExpense(t *testing.T) {
 
 // --- create fail spy
 func newSpyCreateFail() db.StoreSpy {
-	return db.NewStoreSpy(insertFail, nil, nil)
+	return db.NewStoreSpy(insertFail, nil, nil, nil)
 }
 
 func insertFail(args ...any) error {
@@ -137,7 +144,7 @@ func insertFail(args ...any) error {
 
 // --- create success spy
 func newSpyCreateSuccess() db.StoreSpy {
-	return db.NewStoreSpy(insertSuccess, nil, nil)
+	return db.NewStoreSpy(insertSuccess, nil, nil, nil)
 }
 
 func insertSuccess(args ...any) error {

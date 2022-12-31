@@ -3,7 +3,6 @@ package db
 import (
 	"database/sql"
 	_ "github.com/lib/pq"
-	"log"
 )
 
 type postgres struct {
@@ -15,10 +14,11 @@ func NewPostgres(url string) *postgres {
 	return &postgres{url: url}
 }
 
-func initTable(db *sql.DB) {
+func initTable(db *sql.DB) error {
 	createTb := newScript().CreateExpenseTable()
 	_, err := db.Exec(createTb)
 	if err != nil {
-		log.Fatal("can't create table ", err)
+		return err
 	}
+	return nil
 }

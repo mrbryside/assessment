@@ -7,7 +7,8 @@ import (
 	"context"
 	"github.com/labstack/echo/v4"
 	"github.com/mrbryside/assessment/internal/pkg/db"
-	"github.com/mrbryside/assessment/internal/pkg/util"
+	"github.com/mrbryside/assessment/internal/pkg/middleware"
+	"github.com/mrbryside/assessment/internal/pkg/util/httputil"
 	"github.com/stretchr/testify/assert"
 	"net/http"
 	"strconv"
@@ -37,11 +38,15 @@ var (
 
 func TestIntegrationUpdateExpense(t *testing.T) {
 	// Setup server
-	db.InitDB(db.NewPostgres("postgresql://root:root@db/test-db?sslmode=disable"))
+	database, err := db.InitDB(db.NewPostgres("postgresql://root:root@db/test-db?sslmode=disable"))
+	if err != nil {
+		t.Fatal("can't init db")
+	}
+	defer database.Close()
 	expenses := NewExpense(db.DB)
-	th := util.TestHelper()
 	eh := echo.New()
-	eh = th.InitItEcho(eh, func() {
+	eh.Use(middleware.VerifyAuthorization)
+	eh = httputil.InitItEcho(eh, func() {
 		eh.POST("/expenses", expenses.CreateExpenseHandler)
 		eh.PUT("/expenses/:id", expenses.UpdateExpenseHandler)
 	})
@@ -54,12 +59,12 @@ func TestIntegrationUpdateExpense(t *testing.T) {
 	wantTags := []string{"beverage"}
 
 	// Act
-	err := th.Seeder(&createdExpense, createBody, "expenses")
+	err = httputil.Seeder(&createdExpense, createBody, "expenses")
 	if err != nil {
 		t.Fatal("can't create expense:", err)
 	}
 	body := bytes.NewBufferString(updatedBody)
-	res := th.Request(http.MethodPut, th.Uri("expenses", strconv.Itoa(createdExpense.ID)), body)
+	res := httputil.Request(http.MethodPut, httputil.Uri("expenses", strconv.Itoa(createdExpense.ID)), body)
 	err = res.Decode(&updatedExpense)
 
 	gotErr := err
