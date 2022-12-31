@@ -137,7 +137,7 @@ var updateTests = []struct {
 }
 
 func TestUpdateExpense(t *testing.T) {
-	t.Parallel()
+	setup(t)
 	for _, utc := range updateTests {
 		utc := utc
 		t.Run(utc.name, func(t *testing.T) {

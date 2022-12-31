@@ -13,13 +13,13 @@ func (e *expense) GetExpenseHandler(c echo.Context) error {
 
 	err := c.Bind(param)
 	if err != nil {
-		log.Errorf("Getting expense error with invalid path parameter")
+		log.Error("Getting expense error with invalid path parameter, ", err)
 		return httputil.BadRequest(c, "Request parameter is invalid.")
 	}
 
 	err = c.Validate(param)
 	if err != nil {
-		log.Errorf("Getting expense error with missing path parameter")
+		log.Error("Getting expense error with missing path parameter, ", err)
 		return httputil.BadRequest(c, err.Error())
 	}
 
@@ -30,13 +30,13 @@ func (e *expense) GetExpenseHandler(c echo.Context) error {
 		model.Arguments()...,
 	)
 	if err != nil && errs.CompareError(err, errs.Error().DBNotFound) {
-		log.Errorf("Getting expense not found, ", err.Error())
+		log.Error("Getting expense not found, ", err)
 		return httputil.NotFound(c, "expense not found")
 	}
 	if err != nil {
-		log.Errorf("Getting expense internal error, ", err.Error())
+		log.Error("Getting expense internal error, ", err)
 		return httputil.InternalServerError(c)
 	}
-	log.Info("Get expense success!!")
+	log.Info("Get expense success!")
 	return httputil.Success(c, model)
 }

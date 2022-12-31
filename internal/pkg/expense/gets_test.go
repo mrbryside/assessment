@@ -47,7 +47,7 @@ var getsTests = []struct {
 }
 
 func TestGetExpenses(t *testing.T) {
-	t.Parallel()
+	setup(t)
 	for _, gt := range getsTests {
 		t.Run(gt.name, func(t *testing.T) {
 			// Arrange

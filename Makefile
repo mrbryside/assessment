@@ -14,6 +14,15 @@ unit-test-only:
 docker-build:
 	docker build -t assessment/expenses:latest .
 
+run: build unit-test
+	./app
+
+start:
+	go run ./cmd/server/server.go
+
+build:
+	go build -o "app" ./cmd/server
+
 # usage => make docker-run DATABASE_URL="url" PORT=2565
 docker-run:
 ifneq ($(and $(DATABASE_URL),$(PORT)),)
@@ -21,12 +30,3 @@ ifneq ($(and $(DATABASE_URL),$(PORT)),)
 else
 		@echo 'no DATABASE_URL, PORT'
 endif
-
-build:
-	go build -o "app" ./cmd/server
-
-run: build unit-test
-	./app
-
-start:
-	go run ./cmd/server/server.go
