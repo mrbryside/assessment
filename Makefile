@@ -11,8 +11,6 @@ unit-test:
 unit-test-only:
 	go clean -testcache && go test -v -tags=only ./... -cover
 
-docker-build:
-	docker build -t assessment/expenses:latest .
 
 run: build unit-test
 	./app
@@ -22,6 +20,9 @@ start:
 
 build:
 	go build -o "app" ./cmd/server
+
+docker-build:
+	docker build -t assessment/expenses:latest .
 
 # usage => make docker-run DATABASE_URL="url" PORT=2565
 docker-run:
