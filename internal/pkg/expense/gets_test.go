@@ -61,13 +61,19 @@ func TestGetExpenses(t *testing.T) {
 			err := expenses.GetExpensesHandler(c)
 
 			wantResp := gt.response
+			wantCode := gt.code
+			wantCalled := gt.called
 
 			// Act
 			gotErr := err
 			gotResp := rec.Body.String()
+			gotCode := c.Response().Status
+			gotCalled := gt.spy.IsWasCalled()
 
 			// Assert
 			assert.Nil(t, gotErr)
+			assert.Equal(t, wantCode, gotCode)
+			assert.Equal(t, wantCalled, gotCalled)
 			assert.JSONEq(t, wantResp, gotResp)
 		})
 	}
